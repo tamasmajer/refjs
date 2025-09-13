@@ -1,0 +1,25 @@
+{
+  "name": "refjs",
+  "version": "1.0.0",
+  "description": "Small reactive UI library",
+  "main": "ref.min.js",
+  "module": "ref.js",
+  "type": "module",
+  "scripts": {
+    "minify": "uglifyjs ref.js --compress --mangle --mangle-props reserved=['SIGNAL','bind','tags','dom','ui','rawVal','val','oldVal','Content-Type','isConnected','nodeType'] --toplevel -o ref.min.js",
+    "size": "node -e \"const fs=require('fs'),zlib=require('zlib');const min=fs.readFileSync('ref.min.js');console.log('Minified:',min.length,'bytes');console.log('Gzipped:',zlib.gzipSync(min).length,'bytes');\"",
+    "build": "npm run minify && npm run size"
+  },
+  "keywords": [
+    "ref",
+    "refjs",
+    "ref.js",
+    "ui",
+    "library",
+    "tiny",
+    "vanjs"
+  ],
+  "devDependencies": {
+    "uglify-js": "^3.19.3"
+  }
+}
