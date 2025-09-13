@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RefJs Calculator</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+
+<body class="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+  <div ref="App"></div>
+
+  <template ref="Calculator">
+    <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm">
+      <div class="mb-4">
+        <div ref="Display"
+          class="bg-gray-900 text-white text-right text-3xl font-mono p-4 rounded-lg min-h-[4rem] flex items-center justify-end overflow-hidden">
+          0
+        </div>
+      </div>
+
+      <div class="grid grid-cols-4 gap-3">
+        <!-- Row 1: Clear, ±, %, ÷ -->
+        <button ref="ClearBtn"
+          class="bg-gray-300 hover:bg-gray-400 text-black font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
+          AC
+        </button>
+        <button ref="PlusMinusBtn"
+          class="bg-gray-300 hover:bg-gray-400 text-black font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
+          ±
+        </button>
+        <button ref="PercentBtn"
+          class="bg-gray-300 hover:bg-gray-400 text-black font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
+          %
+        </button>
+        <button ref="DivideBtn"
+          class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
+          ÷
+        </button>
+
+        <!-- Row 2: 7, 8, 9, × -->
+        <button ref="Btn7"
+          class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
+          7
+        </button>
+        <button ref="Btn8"
+          class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
+          8
+        </button>
+        <button ref="Btn9"
+          class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
+          9
+        </button>
+        <button ref="MultiplyBtn"
+          class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
+          ×
+        </button>
+
+        <!-- Row 3: 4, 5, 6, - -->
+        <button ref="Btn4"
+          class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
+          4
+        </button>
+        <button ref="Btn5"
+          class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
+          5
+        </button>
+        <button ref="Btn6"
+          class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
+          6
+        </button>
+        <button ref="SubtractBtn"
+          class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
+          −
+        </button>
+
+        <!-- Row 4: 1, 2, 3, + -->
+        <button ref="Btn1"
+          class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
+          1
+        </button>
+        <button ref="Btn2"
+          class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
+          2
+        </button>
+        <button ref="Btn3"
+          class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
+          3
+        </button>
+        <button ref="AddBtn"
+          class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
+          +
+        </button>
+
+        <!-- Row 5: 0 (spans 2), ., = -->
+        <button ref="Btn0"
+          class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors col-span-2 min-h-[4rem]">
+          0
+        </button>
+        <button ref="DecimalBtn"
+          class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
+          .
+        </button>
+        <button ref="EqualsBtn"
+          class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
+          =
+        </button>
+      </div>
+    </div>
+  </template>
+
+  <script type="module">
+    import ref from './ref.min.js'
+
+    // Calculator state
+    const display = ref('0')
+    const previousValue = ref(0)
+    const operation = ref(null)
+    const waitingForOperand = ref(false)
+
+    // Format display value
+    const formatDisplay = (value) => {
+      const num = parseFloat(value)
+      if (isNaN(num)) return '0'
+
+      // Handle very large or very small numbers
+      if (Math.abs(num) >= 1e10 || (Math.abs(num) < 1e-6 && num !== 0)) {
+        return num.toExponential(5)
+      }
+
+      // Remove unnecessary decimal places
+      return num.toString().slice(0, 12)
+    }
+
+    // Input a digit
+    const inputDigit = (digit) => {
+      if (waitingForOperand.ref) {
+        display.ref = String(digit)
+        waitingForOperand.ref = false
+      } else {
+        display.ref = display.ref === '0' ? String(digit) : display.ref + digit
+      }
+    }
+
+    // Input decimal point
+    const inputDecimal = () => {
+      if (waitingForOperand.ref) {
+        display.ref = '0.'
+        waitingForOperand.ref = false
+      } else if (display.ref.indexOf('.') === -1) {
+        display.ref = display.ref + '.'
+      }
+    }
+
+    // Clear calculator
+    const clear = () => {
+      display.ref = '0'
+      previousValue.ref = 0
+      operation.ref = null
+      waitingForOperand.ref = false
+    }
+
+    // Toggle sign
+    const toggleSign = () => {
+      const value = parseFloat(display.ref)
+      if (value !== 0) {
+        display.ref = String(-value)
+      }
+    }
+
+    // Calculate percentage
+    const percentage = () => {
+      const value = parseFloat(display.ref)
+      display.ref = String(value / 100)
+    }
+
+    // Perform calculation
+    const calculate = (firstOperand, secondOperand, operation) => {
+      switch (operation) {
+        case '+':
+          return firstOperand + secondOperand
+        case '-':
+          return firstOperand - secondOperand
+        case '*':
+          return firstOperand * secondOperand
+        case '/':
+          return secondOperand !== 0 ? firstOperand / secondOperand : 0
+        default:
+          return secondOperand
+      }
+    }
+
+    // Perform operation
+    const performOperation = (nextOperation) => {
+      const inputValue = parseFloat(display.ref)
+
+      if (previousValue.ref === 0) {
+        previousValue.ref = inputValue
+      } else if (operation.ref) {
+        const currentValue = previousValue.ref || 0
+        const newValue = calculate(currentValue, inputValue, operation.ref)
+
+        display.ref = formatDisplay(newValue)
+        previousValue.ref = newValue
+      }
+
+      waitingForOperand.ref = true
+      operation.ref = nextOperation
+    }
+
+    // Handle equals
+    const handleEquals = () => {
+      if (operation.ref && !waitingForOperand.ref) {
+        const inputValue = parseFloat(display.ref)
+        const currentValue = previousValue.ref || 0
+        const newValue = calculate(currentValue, inputValue, operation.ref)
+
+        display.ref = formatDisplay(newValue)
+        previousValue.ref = 0
+        operation.ref = null
+        waitingForOperand.ref = true
+      }
+    }
+
+    // Keyboard support
+    ref(document, {
+      onkeydown: (e) => {
+        e.preventDefault()
+
+        if (e.key >= '0' && e.key <= '9') {
+          inputDigit(parseInt(e.key))
+        } else if (e.key === '.') {
+          inputDecimal()
+        } else if (e.key === '+') {
+          performOperation('+')
+        } else if (e.key === '-') {
+          performOperation('-')
+        } else if (e.key === '*') {
+          performOperation('*')
+        } else if (e.key === '/') {
+          performOperation('/')
+        } else if (e.key === 'Enter' || e.key === '=') {
+          handleEquals()
+        } else if (e.key === 'Escape' || e.key === 'c' || e.key === 'C') {
+          clear()
+        } else if (e.key === '%') {
+          percentage()
+        }
+      }
+    })
+
+    // Render calculator
+    ref.App(ref.Calculator({
+      Display: () => display.ref,
+
+      // Number buttons
+      Btn0: { onclick: () => inputDigit(0) },
+      Btn1: { onclick: () => inputDigit(1) },
+      Btn2: { onclick: () => inputDigit(2) },
+      Btn3: { onclick: () => inputDigit(3) },
+      Btn4: { onclick: () => inputDigit(4) },
+      Btn5: { onclick: () => inputDigit(5) },
+      Btn6: { onclick: () => inputDigit(6) },
+      Btn7: { onclick: () => inputDigit(7) },
+      Btn8: { onclick: () => inputDigit(8) },
+      Btn9: { onclick: () => inputDigit(9) },
+
+      // Operation buttons
+      AddBtn: { onclick: () => performOperation('+') },
+      SubtractBtn: { onclick: () => performOperation('-') },
+      MultiplyBtn: { onclick: () => performOperation('*') },
+      DivideBtn: { onclick: () => performOperation('/') },
+      EqualsBtn: { onclick: handleEquals },
+
+      // Utility buttons
+      DecimalBtn: { onclick: inputDecimal },
+      ClearBtn: { onclick: clear },
+      PlusMinusBtn: { onclick: toggleSign },
+      PercentBtn: { onclick: percentage }
+    }))
+  </script>
+</body>
+
+</html>
