@@ -1,5 +1,11 @@
-// using vanjs-1.5.3.js
-const ui = (REF, DEF = REF) => {
+/**
+ * refjs — tiny reactive DOM via `[ref]`
+ * - Tags: `ref.div(...)`; Templates: `ref.Card(...)` binds `[ref="Card"]`
+ * - Calls: signals (`ref(v)`|`ref(fn)`|`ref(state, viewFn)`), DOM (`ref(root, ...)`), storage (`ref(localStorage, prefix?)`), requests (`ref(fetch, defaults?)`)
+ * - Custom instance: `ref.withSignal(attrName, signalKeyName?)` (defaults to `attrName`)
+ */
+// using vanjs-1.5.3.js (adapted)
+const ui = (REF, VALUE = REF) => {
   let O = Object,
     protoOf = x => O.getPrototypeOf(x ?? 0),
     changedStates, derivedStates, curDeps, curNewDerives, alwaysConnectedDom = { isConnected: 1 },
@@ -10,11 +16,9 @@ const ui = (REF, DEF = REF) => {
     hasUpper = c => c[0] >= 'A' && c[0] <= 'Z',
     hasLower = c => c[0] >= 'a' && c[0] <= 'z',
 
-    // vanjs code:
-
+    // VANJS
     addAndScheduleOnFirst = (set, s, f, waitMs) =>
       (set ?? (setTimeout(f, waitMs), new Set)).add(s),
-
     runAndCaptureDeps = (f, deps, arg) => {
       let prevDeps = curDeps
       curDeps = deps
@@ -27,9 +31,7 @@ const ui = (REF, DEF = REF) => {
         curDeps = prevDeps
       }
     },
-
     keepConnected = l => l.filter(b => b._dom?.isConnected),
-
     addStatesToGc = d => statesToGc = addAndScheduleOnFirst(statesToGc, d, () => {
       for (let s of statesToGc)
         s._bindings = keepConnected(s._bindings),
@@ -42,12 +44,10 @@ const ui = (REF, DEF = REF) => {
         curDeps?._getters?.add(this)
         return this.rawVal
       },
-
       get oldVal() {
         curDeps?._getters?.add(this)
         return this._oldVal
       },
-
       set val(v) {
         curDeps?._setters?.add(this)
         if (v !== this.rawVal) {
@@ -57,10 +57,9 @@ const ui = (REF, DEF = REF) => {
             this._oldVal = v
         }
       },
-      get [DEF]() { return this.val },
-      set [DEF](v) { this.val = v },
+      get [VALUE]() { return this.val },
+      set [VALUE](v) { this.val = v },
     },
-
     state = initVal => ({
       __proto__: stateProto,
       rawVal: initVal,
@@ -98,28 +97,6 @@ const ui = (REF, DEF = REF) => {
         deps._setters.has(d) || (addStatesToGc(d), d._listeners.push(listener))
       return s
     },
-
-    // derive = (f, s = state(), dom) => {
-    //   let deps = { _getters: new Set, _setters: new Set }, listener = { f, s }
-    //   let debounceTimer = null
-    //   let wrappedF = (prevVal) => {
-    //     // console.log('wrappedF', f, prevVal)
-    //     let result = runAndCaptureDeps(f, deps, prevVal)
-    //     console.log('result', f, prevVal, result)
-    //     if (!result?.then) return result
-    //     clearTimeout(debounceTimer)
-    //     debounceTimer = setTimeout(async () => {
-    //       try { s.val = await result } catch (error) { console.error('Promise error:', error) /* s.val = null*/ }
-    //     }, 100)
-    //     return s.rawVal
-    //   }
-    //   listener.f = wrappedF
-    //   listener._dom = dom ?? curNewDerives?.push(listener) ?? alwaysConnectedDom
-    //   s.val = wrappedF(s.rawVal)
-    //   for (let d of deps._getters)
-    //     deps._setters.has(d) || (addStatesToGc(d), d._listeners.push(listener))
-    //   return s
-    // },
 
     add = (dom, ...children) => {
       children = children.flat(Infinity)
@@ -160,8 +137,6 @@ const ui = (REF, DEF = REF) => {
       }
     },
 
-    // vanjs continues:
-
     tag = (ns, name, ...args) => {
       if (args.length === 1 && protoOf(args[0]) === arrProto) args = args[0]
       let [{ is, ...props }, ...children] = protoOf(args[0]) === objProto ? args : [{}, ...args],//fixArgs(args),
@@ -173,7 +148,6 @@ const ui = (REF, DEF = REF) => {
     remove = (dom) => dom.remove(),
     replaceWith = (dom, newDom) => dom.replaceWith(newDom),
     update = (dom, newDom) => newDom ? newDom !== dom && replaceWith(dom, newDom) : remove(dom),
-
     updateDoms = () => {
       let iter = 0, derivedStatesArray = [...changedStates].filter(s => s.rawVal !== s._oldVal)
       do {
@@ -188,58 +162,49 @@ const ui = (REF, DEF = REF) => {
       for (let s of changedStatesArray) s._oldVal = s.rawVal
     },
 
-    // modified vanjs tags - simplified for ref-only approach
+    // TAG DECONSTRUCTION
     templateTag = (node, sel, templ = ref(sel, node.content ?? node)) => templ ? props => bindTemplate(templ, props) : _undefined,
     handler = param => ({ get: (_, name) => param?.nodeType ? templateTag(param, name) : tag.bind(_undefined, param, name) }),
     tags = new Proxy((ns, ...args) => ns?.nodeType ? bindTemplate(ns, args[0]) : new Proxy(tag, handler(ns)), handler()),
 
-    // vanjs
-    // hydrate = (dom, f) => update(dom, bind(f, dom)),
-    setChildren = (dom, ...children) => {
-      dom.replaceChildren()
-      add(dom, ...children)
-    },
-
-    // conditional binding
-    conditional = (states, f) => {
-      // Handle both single state and array of states
-      const stateArray = protoOf(states) === arrProto ? states : [states];
-      let calcState = derive(() => stringify(stateArray.map(state => state.val))),
-        currState, currView
-      return () => currState === calcState.val ? currView : (currState = calcState.val) && (currView = f())
-    },
-
-    // dom references - simplified to ref attributes only
+    // DOM DECONSTRUCTION
     ref = (refName, root = doc) => refName === '' || root.matches?.(`[${REF}="${refName}"]`) ? root : (root.content ?? root).querySelector(`[${REF}="${refName}"]`),
-    refInTemplates = (templateName) => {
-      // First check if it's a template element itself
-      for (let t of doc.querySelectorAll('template')) {
-        if (t.getAttribute(REF) === templateName) return t
-        // Then check inside template content for sub-templates
-        let subTemplate = ref(templateName, t.content ?? t)
-        if (subTemplate) return subTemplate
-      }
-    },
     refProxy = (root) => ({
       get: (_, refName) => {
         let el = ref(refName, root)
-        return el ? O.assign((...args) => bindTemplate(el, args), { [DEF]: el }) : _undefined
+        return el ? O.assign((...args) => bindTemplate(el, args), { [VALUE]: el }) : _undefined
       }
     }),
     domProxy = new Proxy({}, refProxy()),
 
+    // TEMPLATE DECONSTRUCTION
+    refInTemplates = (templateName) => {
+      for (let t of doc.querySelectorAll('template')) {
+        if (t.getAttribute(REF) === templateName) return t
+        let subTemplate = ref(templateName, t.content ?? t)
+        if (subTemplate) return subTemplate
+      }
+    },
+    templatesProxy = new Proxy({}, {
+      get: (_, templateName) => {
+        const template = refInTemplates(templateName)
+        return template ? O.assign((...args) => bindTemplate(template, args), { [VALUE]: template }) : _undefined
+      }
+    }),
+
+    // TEMPLATE BINDING
+    fixArgs = (args) => protoOf(args[0]) === objProto ? args : [{}, ...args],
     createFragment = () => doc.createElement(':'),
     fragment = (...children) => add(createFragment(), ...children),
-
-    fixArgs = (args) => protoOf(args[0]) === objProto ? args : [{}, ...args],
-
-    // Remove ref attributes from element and its descendants to avoid duplicates in DOM
+    setChildren = (dom, ...children) => {
+      dom.replaceChildren()
+      add(dom, ...children)
+    },
+    // Remove `[ref]` attributes to avoid duplicates
     removeRefs = (element) => {
       element.querySelectorAll?.(`[${REF}]`).forEach(el => el.removeAttribute(REF))
       if (element.hasAttribute?.(REF)) element.removeAttribute(REF)
     },
-
-    // templates
     bindTemplate = (node, updates) => {
       let { content } = node
       let root =
@@ -249,7 +214,6 @@ const ui = (REF, DEF = REF) => {
             fragment(...content.cloneNode(1).children)) :
           node.isConnected ? node :
             node.cloneNode(1)
-
       let [selectors, ...children] = fixArgs(updates),
         props = {}
       if (!children.length) for (let [k, v] of O.entries(selectors)) {
@@ -260,46 +224,20 @@ const ui = (REF, DEF = REF) => {
         }
       }
       bindContent(root, [props, ...children])
-
-      // Clean up ref attributes from cloned instance
       if (root !== node) removeRefs(root)
-
       return root
     },
     bindContent = (node, v) => {
-      // let proto = protoOf(v)
       if (protoOf(v) !== arrProto) v = [v]
       let o = (protoOf(v[0]) === objProto) && v.shift()
       if (v.length === 1 && protoOf(v[0]) === funcProto) { v[0].isTopFragment = true; v[0] = bind(v[0], createFragment()); }
       if (o) bindProps(node, o)
-      if (v.length /*|| proto === arrProto*/) setChildren(node, v)
+      if (v.length) setChildren(node, v)
       return node
     },
 
-    // http requests
-    // request = c => {
-    //   let { method, headers, body, query, loading, failed, result, path, url } = c;
-    //   url = (url || '') + (path || '');
-    //   if (query) url += (url.includes('?') ? '&' : '?') + new URLSearchParams(query);
-    //   method ||= body ? 'POST' : 'GET';
-    //   headers = { 'Content-Type': 'application/json', ...headers };
-    //   body = protoOf(body) === objProto ? stringify(body) : body;
-    //   loading?.(url);
-    //   return fetch(url, { method, headers, body })
-    //     .then(async response =>
-    //       response.ok ? await response.text()
-    //         .then(d => { try { d = parse(d) } catch { }; let d2 = result?.(d); return d2 === _undefined ? d : d2 })
-    //         : failed?.({ response })
-    //     )
-    //     .catch(error => failed?.({ error }))
-    //     .finally(() => loading?.())
-    // },
-
-    // localStorage cache support
-    // Cache for created cache objects
+    // LOCALSTORAGE WRAPPER
     lsCache = new WeakMap(),
-
-    // Dynamic cache creator for any storage object with optional prefix support
     createCache = (ls, prefix = '') => {
       if (!lsCache.has(ls)) lsCache.set(ls, {})
       const lsSignals = lsCache.get(ls)
@@ -311,7 +249,7 @@ const ui = (REF, DEF = REF) => {
       })
     },
 
-    // Dynamic request creator for any fetch function
+    // FETCH WRAPPER
     createRequest = (fetchFn, defaultConfig = {}) => {
       const requestFn = (c = {}) => {
         // Merge default config with request config
@@ -333,127 +271,60 @@ const ui = (REF, DEF = REF) => {
           .finally(() => loading?.())
       }
       return requestFn
-    }
+    },
 
-  // createReactiveFetch = (fetchFn, deps, configFn) => {
-  //   const request = createRequest(fetchFn)
-  //   console.log('createReactiveFetch', fetchFn, deps, configFn);
-  //   const actualDeps = Array.isArray(deps) ? deps : null
-  //   const actualConfigFn = actualDeps ? configFn : deps
+    // SIGNAL CREATION
+    conditional = (states, f) => {
+      const stateArray = protoOf(states) === arrProto ? states : [states];
+      let calcState = derive(() => stringify(stateArray.map(state => state.val))),
+        currState, currView
+      return () => currState === calcState.val ? currView : (currState = calcState.val) && (currView = f())
+    },
+    awaitResult = (fn) => {
+      let result = state(null), timer = null,
+        awaitDebounce = () => {
+          let value = fn()
+          clearTimeout(timer)
+          timer = setTimeout(async () => {
+            result.val = value?.then ? await value : value
+          }, 100)
+          return value
+        }
+      derive(awaitDebounce)
+      return result
+    },
+    signalFunction = (v, f) =>
+      f ? awaitResult(conditional(v, f)) :
+        protoOf(v) === funcProto ? awaitResult(v) :
+          state(v),
 
-  //   let debounceTimer = null
-  //   const result = state(null)
+    // MAIN: REF: calls → signals; gets → tags/templates
+    mainProxy = new Proxy(signalFunction, {
+      apply: (target, thisArg, args) => {
+        const [v, f] = args
+        if (v === window || v?.nodeType) return bindContent(v, fixArgs(args.slice(1)))
+        if (v?.getItem && v?.setItem) return createCache(v, f)
+        if (typeof v === 'function' && v.name === 'fetch') return createRequest(v, f)
+        if (v === fetch) return createRequest(v, f)
+        return target.apply(thisArg, args)
+      },
+      get: (_, name) =>
+        name === 'withSignal' ? (r, d) => ui(r, d) :
+          name === VALUE ? signalFunction :
+            (hasUpper(name) ?
+              templatesProxy[name] || domProxy[name] :
+              tags[name])
+    })
 
-  //   // Use existing derive with explicit deps or auto-deps
-  //   const configDerived = actualDeps ?
-  //     derive(actualDeps, actualConfigFn) :
-  //     derive(actualConfigFn)
-
-  //   // Use existing derive to watch config changes
-  //   derive(() => {
-  //     let config = configDerived.val
-  //     if (!config) return
-  //     if (protoOf(config) === strProto) config = { url: config }
-
-  //     clearTimeout(debounceTimer)
-  //     debounceTimer = setTimeout(() => {
-  //       // Use existing request function - merge user's result callback
-  //       request({
-  //         ...config,
-  //         result: data => {
-  //           result.val = data
-  //           config.result?.(data)  // call user's callback if provided
-  //         }
-  //       })
-  //     }, 100)
-  //   })
-
-  //   return result
-  // }
-  // Cross-tab localStorage synchronization (only works for localStorage)
+  // Cross-tab localStorage synchronization
   addEventListener('storage', e => {
-    // Only update signals from localStorage caches
     const lsSignals = lsCache.get(localStorage)
     if (lsSignals?.[e.key]) {
       lsSignals[e.key].val = parse(e.newValue)
     }
   })
 
-  // create templates proxy for direct template access
-  const templatesProxy = new Proxy({}, {
-    get: (_, templateName) => {
-      // Use dedicated template finder function
-      const template = refInTemplates(templateName)
-      return template ? O.assign((...args) => bindTemplate(template, args), { [DEF]: template }) : _undefined
-    }
-  })
-
-  // simplified 5-function API
-  // const signalFunction0 = (v, f) => {
-  //   if (f) return derive(conditional(v, f))
-  //   if (protoOf(v) === funcProto) return derive(v)
-  //   return state(v)
-  // }
-
-  const promiseWrapper = (fn) => {
-    const result = state(null)
-    let timer = null
-
-    const wrapper = () => {
-      const value = fn()
-      clearTimeout(timer)
-      timer = setTimeout(async () => {
-        result.val = value?.then ? await value : value
-      }, 100)
-      return value
-    }
-
-    derive(wrapper)
-    return result
-  }
-
-  const signalFunction = (v, f) =>
-    f ? promiseWrapper(conditional(v, f)) :
-      protoOf(v) === funcProto ? promiseWrapper(v) :
-        state(v)
-
-  // main proxy for direct access like ui.js
-  const mainProxy = new Proxy(signalFunction, {
-    apply: (target, thisArg, args) => {
-      const [v, f] = args
-      // Check if it's a DOM object (window, document, document.body, etc.)
-      if (v === window || v?.nodeType) {
-        return bindContent(v, fixArgs(args.slice(1)))
-      }
-
-      // Check if it's a storage-like object (has getItem, setItem methods)
-      if (v?.getItem && v?.setItem) return createCache(v, f)
-
-      // Check if it's reactive fetch: def(fetch, [deps], () => config) or def(fetch, () => config)
-      // if ((v === fetch || v?.name === 'fetch') && (typeof f === 'function' || Array.isArray(f))) {
-      //   return createReactiveFetch(v, f, args[2])
-      // }
-
-      // Check if it's a fetch-like function
-      if (typeof v === 'function' && v.name === 'fetch') return createRequest(v, f)
-      if (v === fetch) return createRequest(v, f)
-      // Fall back to original signalFunction for everything else
-      return target.apply(thisArg, args)
-    },
-    get: (_, name) =>
-      name === 'withSignal' ? (r, d) => ui(r, d) :
-        name === DEF ? signalFunction :
-          (hasUpper(name) ?
-            templatesProxy[name] || domProxy[name] :
-            tags[name])
-  })
-
   return mainProxy
 }
 
-// Initial instance with 'def'
-// const def = ui('def')
-
-// Export both the factory and the default instance
-// export { ui, def }
 export default ui('ref')
