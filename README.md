@@ -445,7 +445,7 @@ const app = ui.withSignal('x-bind', 'val')
 - Modern browser with ES6 module support
 - No build tools required  
 - Works with any CSS framework
-- Import: `import ref from 'ref.js'`
+- Import: `import ref from 'https://cdn.jsdelivr.net/gh/tamasmajer/refjs/ref.min.js'` or from wherever you store it
 
 ---
 

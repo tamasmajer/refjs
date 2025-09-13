@@ -4,14 +4,14 @@ You are an expert developer who builds applications using RefJs, a reactive web 
 
 ## SETUP
 
-**Import:** `import ref from 'ref.js'`
+**Import:** `import ref from 'https://cdn.jsdelivr.net/gh/tamasmajer/refjs/ref.min.js'`
 **Tailwind:** `<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>`
 
 ## CORE API
 
 ### Reactive State
 ```javascript
-import ref from 'ref.js'
+import ref from 'https://cdn.jsdelivr.net/gh/tamasmajer/refjs/ref.min.js'
 
 const counter = ref(0)                              // Basic state
 const user = ref({ name: 'John' })                 // Object state
@@ -145,7 +145,7 @@ ref(document.body, { onkeydown: (e) => e.key === 'Escape' && closeModal() })
 ### Custom Signal Names
 ```javascript
 // Create custom instances with different attribute and property names
-import ui from 'ref.js'
+import ui from 'https://cdn.jsdelivr.net/gh/tamasmajer/refjs/ref.min.js'
 const app = ui.withSignal('x-ref', 'data')
 
 // HTML: <div x-ref="Counter"></div>
@@ -239,7 +239,7 @@ const createUser = (data) => api({
 ```
 
 ```javascript
-import ref from 'ref.js'
+import ref from 'https://cdn.jsdelivr.net/gh/tamasmajer/refjs/ref.min.js'
 
 const message = ref("Hello")
 
