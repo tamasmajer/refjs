@@ -51,9 +51,7 @@ This is a proof of concept - a personal experiment shared to gauge interest in s
 
 Works with any CSS framework.
 
-### Named after Vue
 
-In Vue one can use `ref` to create reactive states, and also to mark up the DOM to access the nodes. In this library generalizes this, here `ref` makes its first argument reactive, which can be a state, a derive function, an explicit condition for a derive function, a DOM node, an HTML template, the fetch function, the localStorage object. We can also use it to access marked DOM nodes, or create tags.
 
 ### Parameter-Based Dispatch
 
@@ -150,7 +148,9 @@ const { div, span } = ref
 const widget = div({ class: 'widget' }, span('Hello'))
 ```
 
+### Named after Vue
 
+In Vue one can use `ref` to create reactive states, and also to mark up the DOM to access the nodes. In this library generalizes this, here `ref` makes its first argument reactive, which can be a state, a derive function, an explicit condition for a derive function, a DOM node, an HTML template, the fetch function, the localStorage object. We can also use it to access marked DOM nodes, or create tags.
 
 ## Features
 
