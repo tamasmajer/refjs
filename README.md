@@ -454,6 +454,143 @@ counter.SIGNAL = 2
 6. **Direct DOM access**: Use `ref.Element.ref` when you need direct DOM manipulation
 7. **localStorage prefixes**: Use prefixes like `ref(localStorage, 'app/')` to avoid naming conflicts and organize data
 
+## VanJS Enhancements
+
+RefJs is built on VanJS 1.5.3 and includes several enhancements that make reactive development more powerful:
+
+### Fragment Support
+Reactive functions can return arrays of elements, enabling dynamic component composition:
+
+```javascript
+const renderItems = () => items.ref.map(item => 
+  ref.div({ class: 'item' }, item.name)
+)
+
+ref.Container(renderItems)  // Automatically handles array of elements
+```
+
+Fragment support also works with conditional rendering:
+```javascript
+const conditionalContent = () => [
+  isLoading.ref && ref.div('Loading...'),
+  hasError.ref && ref.div({ class: 'error' }, error.ref),
+  data.ref && ref.div('Content loaded')
+].filter(Boolean)
+
+ref.App(conditionalContent)
+```
+
+Templates with multiple root elements are automatically wrapped in document fragments. When a parent container only contains fragment children, the fragments unfold directly into the parent, preserving flexbox and grid layouts that require direct parent-child relationships.
+
+### Explicit Updates
+Control when expensive computations run by explicitly declaring dependencies, perfect for tab interfaces and performance optimization:
+
+```javascript
+// Tab switching: only update when activeTab changes, not when content changes
+const tabContent = ref([activeTab], () => 
+  activeTab.ref === 'users' ? 
+    ref.UserList({ users: allUsers.ref }) :  // Won't re-render when allUsers changes
+  activeTab.ref === 'settings' ?
+    ref.SettingsPanel({ config: appConfig.ref }) :  // Won't re-render when appConfig changes
+    ref.div('Select a tab')
+)
+
+ref.App(tabContent)
+```
+
+Without explicit dependencies, this would re-render whenever `allUsers` or `appConfig` changes, even when those tabs aren't visible. With explicit updates, it only re-renders when `activeTab` changes.
+
+You can also force updates for stateless calls:
+```javascript
+// Force update on user action, regardless of other dependencies
+const refreshData = ref([forceUpdate], () => {
+  // This runs when forceUpdate changes, ignoring other state changes
+  return fetchAndRenderExpensiveData()
+})
+
+// Trigger refresh manually
+const handleRefresh = () => forceUpdate.ref = Date.now()
+```
+
+This prevents unnecessary re-renders and ensures proper cleanup of event listeners and DOM references in complex component hierarchies.
+
+### Shorter Conditional Syntax
+RefJS enables shorter conditional rendering by supporting the `&&` operator. It automatically filters out `false`, `null`, or `undefined` values but preserves the number zero. To handle zero values, use explicit comparisons like `value !== 0`:
+
+```javascript
+// Concise conditional syntax - no ternary needed
+const message = () => user.ref && `Welcome, ${user.ref.name}!`
+const errorDisplay = () => hasError.ref && ref.div({ class: 'error' }, 'Something went wrong')
+const count = () => items.ref.length > 0 && ref.span(`${items.ref.length} items`)
+
+// Instead of verbose ternaries
+const message = () => user.ref ? `Welcome, ${user.ref.name}!` : null
+const errorDisplay = () => hasError.ref ? ref.div({ class: 'error' }, 'Something went wrong') : null
+const count = () => items.ref.length > 0 ? ref.span(`${items.ref.length} items`) : null
+```
+
+Smart value handling preserves meaningful content while filtering out display issues:
+
+```javascript
+// These become empty strings
+ref.div(null)           // Empty div
+ref.span(undefined)     // Empty span  
+ref.p(false && 'text')  // Empty paragraph
+
+// These preserve the actual value (numbers and strings are kept)
+ref.h1(0)              // Shows "0"
+ref.span('')           // Shows empty string
+ref.div(-1)            // Shows "-1"
+```
+
+This makes conditional rendering more concise while preventing `null`, `undefined`, or `false` from appearing as unwanted text in your UI.
+
+### HTML-First Development
+Write component structure in HTML templates, then bind behavior with minimal JavaScript:
+
+```html
+<!-- Define structure in HTML -->
+<template ref="TodoApp">
+  <div class="todo-container">
+    <input ref="NewTodo" placeholder="Add todo..." />
+    <button ref="AddBtn" class="btn-primary">Add</button>
+    <div ref="TodoList" class="todo-list"></div>
+    <div ref="Summary" class="summary"></div>
+  </div>
+</template>
+
+<script type="module">
+  import ref from 'ref.js'
+  
+  const todos = ref([])
+  const newTodo = ref('')
+  
+  // Bind behavior to HTML structure
+  ref.App(
+    ref.TodoApp({
+      NewTodo: { 
+        oninput: e => newTodo.ref = e.target.value,
+        value: () => newTodo.ref 
+      },
+      AddBtn: { 
+        onclick: () => {
+          if (newTodo.ref.trim()) {
+            todos.ref = [...todos.ref, { id: Date.now(), text: newTodo.ref }]
+            newTodo.ref = ''
+          }
+        }
+      },
+      TodoList: () => todos.ref.map(todo => 
+        ref.div({ class: 'todo-item' }, todo.text)
+      ),
+      Summary: () => `${todos.ref.length} todos`
+    })
+  )
+</script>
+```
+
+This approach separates concerns cleanly: HTML handles structure and styling, JavaScript handles behavior and state management.
+
 ## Installation
 
 - Modern browser with ES6 module support
