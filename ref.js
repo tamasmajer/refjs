@@ -139,7 +139,7 @@ const ui = (REF, VALUE = REF) => {
 
     tag = (ns, name, ...args) => {
       if (args.length === 1 && protoOf(args[0]) === arrProto) args = args[0]
-      let [{ is, ...props }, ...children] = protoOf(args[0]) === objProto ? args : [{}, ...args],//fixArgs(args),
+      let [{ is, ...props }, ...children] = protoOf(args[0]) === objProto ? args : [{}, ...args],
         dom = ns?.nodeType ? ns : ns ? doc.createElementNS(ns, name, { is }) : doc.createElement(name, { is })
       bindProps(dom, props)
       return add(dom, children)
@@ -252,7 +252,6 @@ const ui = (REF, VALUE = REF) => {
     // FETCH WRAPPER
     createRequest = (fetchFn, defaultConfig = {}) => {
       const requestFn = (c = {}) => {
-        // Merge default config with request config
         c = { ...defaultConfig, ...c }
         let { method, headers, body, query, loading, failed, result, path, url } = c;
         url = (url || '') + (path || '');
@@ -299,7 +298,7 @@ const ui = (REF, VALUE = REF) => {
       return state(v)
     },
 
-    // MAIN: REF: calls → signals; gets → tags/templates
+    // MAIN ACCESS POINT: get → tags/templates, call → signals, constructor → configure 
     mainProxy = new Proxy(signalFunction, {
       apply: (target, thisArg, args) => {
         const [v, f] = args
