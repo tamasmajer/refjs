@@ -1,6 +1,8 @@
 # RefJs
 
-A small (<2.5KB) client-side UI library based on [VanJS](https://vanjs.org) for building reactive user interfaces with minimal JavaScript, providing reactive template, request and storage support, in a single ([vue-like](https://vuejs.org/guide/essentials/template-refs#template-refs)) [`ref`](https://vuejs.org/guide/essentials/reactivity-fundamentals.html#declaring-reactive-state-1) function.
+A small (<2.5KB) client-side library based on [VanJS](https://vanjs.org) for building user interfaces with minimal JavaScript, by supporting not only reactive states and tags, but also reactive DOM nodes, HTML templates, HTTP requests and localStorage. 
+
+In Vue one can use `ref` to create reactive states, and also to mark up the DOM to access the nodes. In this library `ref` makes its first argument reactive, which can be a state, a derive function, an explicit condition for a derive function, a DOM node, an HTML template, the fetch function, the localStorage object. 
 
 ## Table of Contents
 
