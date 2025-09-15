@@ -50,7 +50,7 @@ This is a proof of concept - a personal experiment shared to gauge interest in s
 
 ### A Single Function
 
-The `ref` function's behavior depends on the first argument's type.
+The `ref` function's behavior depend on the first argument's type.
 
 ```javascript
 ref(firstArgument, ...options)
