@@ -39,8 +39,6 @@ This is a proof of concept - a personal experiment shared to gauge interest in s
 </html>
 ```
 
-
-
 ### Getting Started
 
 1. **Requirements**: Modern browser with ES6 module support, no build tools required
@@ -49,13 +47,10 @@ This is a proof of concept - a personal experiment shared to gauge interest in s
 4. **Create reactive data**: `const counter = ref(0)`
 5. **Bind to templates or other containers**: `ref.App(ref.Counter({ Display: counter }))`
 
-Works with any CSS framework.
 
+### A Single Function
 
-
-### Parameter-Based Dispatch
-
-The `ref` function changes behavior based on the first argument's type.
+The `ref` function's behavior depends on the first argument's type.
 
 ```javascript
 ref(firstArgument, ...options)
@@ -72,9 +67,9 @@ ref(firstArgument, ...options)
 | **DOM Node** | Binds to existing element | `ref(window, { onresize: handler })` |
 | **Property Access** | Accesses templates/tags | `ref.Button`, `ref.div` |
 
-### Working Code Snippets
+### Examples
 
-**Reactive State:**
+**To get a reactive state:**
 ```javascript
 const counter = ref(0)                          // Number state
 const user = ref({ name: 'John' })              // Object state
@@ -83,19 +78,19 @@ const expensive = ref(counter, () => heavyCalc()) // Computed state (single dep)
 const optimized = ref([counter, user], () => compute()) // Computed state (multi deps)
 ```
 
-**Storage Integration:**
+**To get a reactive localStorage:**
 ```javascript
 const { settings } = ref(localStorage)           // Auto-sync to localStorage
 const { prefs } = ref(localStorage, 'myapp/')    // With namespace prefix
 ```
 
-**HTTP Requests:**
+**To get a modified fetch function:**
 ```javascript
 const request = ref(fetch)                       // Basic HTTP wrapper
 const api = ref(fetch, { url: '/api' })          // With default config
 ```
 
-**DOM Binding:**
+**To update an existing DOM node:**
 ```javascript
 ref(window, { onresize: () => updateLayout() })     // Bind to window
 ref(document.body, { class: 'dark-theme' })         // Bind to body
@@ -103,7 +98,7 @@ ref(myElement, { onclick: handler }, 'New content') // Bind + add children
 ref(myElement, { Title: 'New Title', Button: { onclick: newHandler } }) // Update descendants by ref names
 ```
 
-**Templates and Elements:**
+**To get templates, elements, tags:**
 ```javascript
 ref.Counter({ count: () => counter.ref })       // Use template
 ref.MyButton.ref.focus()                        // Direct DOM access
@@ -112,7 +107,7 @@ const { div, span } = ref                       // Create elements
 
 ### Return Values
 
-**Reactive state** → Access/modify with `.ref`
+**Reactive state** → Access/modify it with `.ref` (configurable)
 ```javascript
 const count = ref(0)
 count.ref = 5                           // Set value
@@ -131,18 +126,18 @@ const api = ref(fetch, { url: '/api' })
 api({ path: '/users' })                 // Makes request
 ```
 
-**Node binding** → Returns the same node (chainable)
+**Binding to an exsisting node** → Returns the same node
 ```javascript
 const elem = ref(myDiv, { class: 'active' }).focus()
 ```
 
-**Templates** → Returns DOM element
+**Templates** → Returns a clone of the template node, a new DOM element
 ```javascript
 const counter = ref.Counter({ Display: () => count.ref })
 document.body.append(counter)           // Add to page
 ```
 
-**Element creators** → Returns DOM element  
+**Tags create elements** → They return a new DOM element  
 ```javascript
 const { div, span } = ref
 const widget = div({ class: 'widget' }, span('Hello'))
