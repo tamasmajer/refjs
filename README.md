@@ -23,16 +23,15 @@ A (<2.5KB) reactive client-side library based on [VanJS](https://vanjs.org) for 
 <!DOCTYPE html>
 <html>
 <body>
+  <!-- container -->
+  <div ref="App"></div>
+
   <!-- template -->
   <template ref="Counter">
-    <!-- parts -->
     <button ref="Decrease">-</button>
     <span ref="Display">0</span>
     <button ref="Increase">+</button>
   </template>
-
-  <!-- container -->
-  <div ref="App"></div>
   
   <script type="module">
     import ref from 'ref.js'
@@ -41,7 +40,7 @@ A (<2.5KB) reactive client-side library based on [VanJS](https://vanjs.org) for 
     const counter = ref(0)
     
     // ui
-    const { Counter, App } = ref
+    const { App, Counter } = ref
     App( 
       Counter({
         Display: () => counter.ref,
