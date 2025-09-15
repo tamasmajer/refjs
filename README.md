@@ -1,13 +1,17 @@
 # RefJs
 
-A small (<2.5KB) client-side library based on [VanJS](https://vanjs.org) for building user interfaces with minimal JavaScript, by supporting not only reactive states and tags, but also reactive DOM nodes, HTML templates, HTTP requests and localStorage. 
+A small (<2.5KB) client-side library based on [VanJS](https://vanjs.org) for building user interfaces with minimal JavaScript, by supporting not only reactive states and tags, but also reactive DOM nodes, HTML templates, HTTP requests and localStorage.
 
-In Vue one can use `ref` to create reactive states, and also to mark up the DOM to access the nodes. In this library `ref` makes its first argument reactive, which can be a state, a derive function, an explicit condition for a derive function, a DOM node, an HTML template, the fetch function, the localStorage object. 
+## Disclaimer
+
+This is a proof of concept - a personal experiment shared to gauge interest in simpler alternatives to today's frameworks.
 
 ## Table of Contents
 
+- [Disclaimer](#disclaimer)
 - [Quick Start](#quick-start)
 - [Basic Usage](#basic-usage)
+- [Compared to Vue](#compared-to-vue)
 - [Parameter-Based Dispatch](#parameter-based-dispatch)
 - [Reactive States](#reactive-states)
 - [Templates and Elements](#templates-and-elements)
@@ -57,15 +61,19 @@ In Vue one can use `ref` to create reactive states, and also to mark up the DOM 
 3. **Create reactive data**: `const counter = ref(0)`
 4. **Bind to templates**: `ref.App(ref.Counter({ Display: counter }))`
 
+## Compared to Vue
+
+In Vue one can use `ref` to create reactive states, and also to mark up the DOM to access the nodes. In this library generalizes this, here `ref` makes its first argument reactive, which can be a state, a derive function, an explicit condition for a derive function, a DOM node, an HTML template, the fetch function, the localStorage object. We can also use it to access marked DOM nodes, or create tags.
+
 ## Parameter-Based Dispatch
 
-The `ref` function changes behavior based on the first parameter's type.
+The `ref` function changes behavior based on the first argument's type.
 
 ```javascript
-ref(firstParameter, ...options)
+ref(firstArgument, ...options)
 ```
 
-| First Parameter | Behavior | Example |
+| First Argument | Behavior | Example |
 |----------------|----------|---------|
 | **Value** | Creates reactive state | `ref(0)`, `ref({ name: 'John' })` |
 | **Function** | Creates computed state | `ref(() => count.ref * 2)` |
