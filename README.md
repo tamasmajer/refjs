@@ -1,6 +1,6 @@
 # RefJs
 
-A (<2.5KB) reactive client-side library based on [VanJS](https://vanjs.org) for building reactive user interfaces using minimal JavaScript by supporting reactive templates, requests, storage, etc, accessible via a single [Vue-like](https://vuejs.org/guide/essentials/template-refs#template-refs) [`ref`](https://vuejs.org/guide/essentials/reactivity-fundamentals.html#declaring-reactive-state-1) function.
+A (<2.5KB) reactive client-side library based on [VanJS](https://vanjs.org) for building reactive user interfaces using minimal JavaScript by supporting reactive templates, requests, storage, etc, all accessible via a single [Vue-like](https://vuejs.org/guide/essentials/template-refs#template-refs) [`ref`](https://vuejs.org/guide/essentials/reactivity-fundamentals.html#declaring-reactive-state-1) function.
 
 ## Table of Contents
 
