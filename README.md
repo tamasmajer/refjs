@@ -143,9 +143,9 @@ const { div, span } = ref
 const widget = div({ class: 'widget' }, span('Hello'))
 ```
 
-### Named after Vue
+### Named after Vue's `ref`
 
-In Vue one can use `ref` to create reactive states, and also to mark up the DOM to access the nodes. In this library generalizes this, here `ref` makes its first argument reactive, which can be a state, a derive function, an explicit condition for a derive function, a DOM node, an HTML template, the fetch function, the localStorage object. We can also use it to access marked DOM nodes, or create tags.
+In Vue `ref` is used to mark up the DOM to access the nodes, and also to create reactive states from primitives or objects. RefJs generalizes this concept, here `ref` can access the marked nodes, and it can be called with special objects to create reactive tools for them.
 
 ## Features
 
