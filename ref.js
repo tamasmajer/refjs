@@ -293,10 +293,11 @@ const ui = (REF, VALUE = REF) => {
       derive(awaitDebounce)
       return result
     },
-    signalFunction = (v, f) =>
-      f ? awaitResult(conditional(v, f)) :
-        protoOf(v) === funcProto ? awaitResult(v) :
-          state(v),
+    signalFunction = function (v, f) {
+      if (f) return awaitResult(conditional(v, f))
+      if (protoOf(v) === funcProto) return awaitResult(v)
+      return state(v)
+    },
 
     // MAIN: REF: calls → signals; gets → tags/templates
     mainProxy = new Proxy(signalFunction, {
@@ -306,14 +307,14 @@ const ui = (REF, VALUE = REF) => {
         if (v?.getItem && v?.setItem) return createCache(v, f)
         if (typeof v === 'function' && v.name === 'fetch') return createRequest(v, f)
         if (v === fetch) return createRequest(v, f)
-        return target.apply(thisArg, args)
+        return target(...args)
       },
+      construct: (target, args) => ui(...args),
       get: (_, name) =>
-        name === 'withSignal' ? (r, d) => ui(r, d) :
-          name === VALUE ? signalFunction :
-            (hasUpper(name) ?
-              templatesProxy[name] || domProxy[name] :
-              tags[name])
+        name === VALUE ? signalFunction :
+          (hasUpper(name) ?
+            templatesProxy[name] || domProxy[name] :
+            tags[name])
     })
 
   // Cross-tab localStorage synchronization

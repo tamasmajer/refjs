@@ -1,6 +1,6 @@
 # RefJs
 
-A (<2.5KB) reactive client-side library based on [VanJS](https://vanjs.org) for building reactive user interfaces using minimal JavaScript. It generalizes [Vue's](https://vuejs.org/guide/essentials/template-refs#template-refs) [`ref()`](https://vuejs.org/guide/essentials/reactivity-fundamentals.html#declaring-reactive-state-1) function to add reactivity to templates, requests, storage, etc.
+A (<2.5KB) reactive client-side library based on [VanJS](https://vanjs.org) for building reactive user interfaces using minimal JavaScript by supporting reactive templates, requests, storage, etc, accessible via a single [Vue-like](https://vuejs.org/guide/essentials/template-refs#template-refs) [`ref`](https://vuejs.org/guide/essentials/reactivity-fundamentals.html#declaring-reactive-state-1) function.
 
 ## Table of Contents
 
@@ -415,23 +415,35 @@ ref(myDiv, {
 Customize attribute and property names used throughout the framework.
 
 **Create custom instances:**
-```javascript
-// Custom attribute and property names
-import ui from 'ref.js'
-const myUI = ui.withSignal('x-ref', 'data')
 
-// Now use custom names in HTML and JavaScript:
-// <div x-ref="App"></div>
-// counter.data = 5
+Vue-like ref attribute, ref function, and .value:
+```javascript
+import RefJs from 'ref.js'
+const ref = new RefJs('ref', 'value'), $refs = ref
+// <div ref="App"></div>
+$refs.App($refs.Counter(...))
+const counter = ref(1)
+counter.value = 2
 ```
 
-**Different attribute and property names:**
+Ref-def variant:
 ```javascript
-import ui from 'ref.js' 
-const app = ui.withSignal('x-bind', 'val')
+import RefJs from 'ref.js'
+const ref = new RefJs('ref', 'def'), def = ref
+// <div ref="App"></div>
+ref.App(ref.Counter(...))
+const counter = def(1)
+counter.def = 2
+```
 
-// HTML: <div x-bind="Counter"></div>
-// JS: state.val = newValue
+UI variant:
+```javascript
+import RefJs from 'ref.js'
+const ui = new RefJs('ref', 'SIGNAL'), SIGNAL = ui
+// <div ref="App"></div>
+ui.App(ui.Counter(...))
+const counter = SIGNAL(1)
+counter.SIGNAL = 2
 ```
 
 ## Best Practices
