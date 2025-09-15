@@ -50,7 +50,7 @@ A (<2.5KB) reactive client-side library based on [VanJS](https://vanjs.org) for 
 ## Basic Usage
 
 1. **Tag elements**: Add `ref="Name"` to HTML elements and templates
-2. **Import**: `import ref from 'ref.js'`
+2. **Import**: `import ref from 'ref.min.js'` locally or from CDN `https://cdn.jsdelivr.net/gh/tamasmajer/refjs/ref.min.js`
 3. **Create reactive data**: `const counter = ref(0)`
 4. **Bind to templates**: `ref.App(ref.Counter({ Display: counter }))`
 
