@@ -26,7 +26,6 @@ A (<2.5KB) reactive client-side library based on [VanJS](https://vanjs.org) for 
   <div ref="App"></div>
 
   <template ref="Counter">
-    <button ref="Decrease">-</button>
     <span ref="Display">0</span>
     <button ref="Increase">+</button>
   </template>
@@ -41,7 +40,6 @@ A (<2.5KB) reactive client-side library based on [VanJS](https://vanjs.org) for 
       Counter({
         Display: () => counter.ref,
         Increase: { onclick: () => counter.ref += 1 },
-        Decrease: { onclick: () => counter.ref -= 1 }
       })
     )
   </script>
