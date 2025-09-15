@@ -1,30 +1,15 @@
 # RefJs
 
+
 A small (<2.5KB) client-side library based on [VanJS](https://vanjs.org) for building user interfaces with minimal JavaScript, by supporting not only reactive states and tags, but also reactive DOM nodes, HTML templates, HTTP requests and localStorage.
 
-## Disclaimer
+## Overview
+
+### Disclaimer
 
 This is a proof of concept - a personal experiment shared to gauge interest in simpler alternatives to today's frameworks.
 
-## Table of Contents
-
-- [Disclaimer](#disclaimer)
-- [Quick Start](#quick-start)
-- [Basic Usage](#basic-usage)
-- [Compared to Vue](#compared-to-vue)
-- [Parameter-Based Dispatch](#parameter-based-dispatch)
-- [Reactive States](#reactive-states)
-- [Templates and Elements](#templates-and-elements)
-- [DOM Creation](#dom-creation)
-- [List Handling](#list-handling)
-- [HTTP Requests](#http-requests)
-- [Global Events and Node Binding](#global-events-and-node-binding)
-- [Custom Signal Names](#custom-signal-names)
-- [Best Practices](#best-practices)
-- [VanJS Enhancements](#vanjs-enhancements)
-- [Installation](#installation)
-
-## Quick Start
+### Working Example
 
 ```html
 <!DOCTYPE html>
@@ -54,18 +39,23 @@ This is a proof of concept - a personal experiment shared to gauge interest in s
 </html>
 ```
 
-## Basic Usage
 
-1. **Tag elements**: Add `ref="Name"` to HTML elements and templates
-2. **Import**: `import ref from 'ref.min.js'` locally or from CDN `https://cdn.jsdelivr.net/gh/tamasmajer/refjs/ref.min.js`
-3. **Create reactive data**: `const counter = ref(0)`
-4. **Bind to templates**: `ref.App(ref.Counter({ Display: counter }))`
 
-## Compared to Vue
+### Getting Started
+
+1. **Requirements**: Modern browser with ES6 module support, no build tools required
+2. **Import**: `import ref from 'https://cdn.jsdelivr.net/gh/tamasmajer/refjs/ref.min.js'` or from your local copy
+3. **Tag elements**: Add `ref="Name"` to HTML elements and templates
+4. **Create reactive data**: `const counter = ref(0)`
+5. **Bind to templates or other containers**: `ref.App(ref.Counter({ Display: counter }))`
+
+Works with any CSS framework.
+
+### Named after Vue
 
 In Vue one can use `ref` to create reactive states, and also to mark up the DOM to access the nodes. In this library generalizes this, here `ref` makes its first argument reactive, which can be a state, a derive function, an explicit condition for a derive function, a DOM node, an HTML template, the fetch function, the localStorage object. We can also use it to access marked DOM nodes, or create tags.
 
-## Parameter-Based Dispatch
+### Parameter-Based Dispatch
 
 The `ref` function changes behavior based on the first argument's type.
 
@@ -84,7 +74,7 @@ ref(firstArgument, ...options)
 | **DOM Node** | Binds to existing element | `ref(window, { onresize: handler })` |
 | **Property Access** | Accesses templates/tags | `ref.Button`, `ref.div` |
 
-### Examples
+### Working Code Snippets
 
 **Reactive State:**
 ```javascript
@@ -160,7 +150,23 @@ const { div, span } = ref
 const widget = div({ class: 'widget' }, span('Hello'))
 ```
 
-## Reactive States
+
+
+## Features
+
+- [Reactive States](#reactive-states)
+- [Templates and Elements](#templates-and-elements)
+- [DOM Creation](#dom-creation)
+- [List Handling](#list-handling)
+- [HTTP Requests](#http-requests)
+- [Global Events and Node Binding](#global-events-and-node-binding)
+- [Custom Signal Names](#custom-signal-names)
+- [Best Practices](#best-practices)
+- [VanJS Enhancements](#vanjs-enhancements)
+
+
+
+### Reactive States
 
 Reactive signals update the UI when data changes.
 
@@ -203,7 +209,7 @@ const { theme, layout } = ref(localStorage, 'editor/')        // Keys: editor/th
 const { bookmarks } = ref(localStorage, 'browser/')           // Keys: browser/bookmarks
 ```
 
-## Templates and Elements
+### Templates and Elements
 
 HTML templates with ref attributes separate structure from behavior.
 
@@ -262,7 +268,7 @@ ref.Element({
 })
 ```
 
-## DOM Creation
+### DOM Creation
 
 Build UI elements programmatically.
 
@@ -292,7 +298,7 @@ div({
 }, () => `Count: ${counter.ref}`)
 ```
 
-## List Handling
+### List Handling
 
 Manage dynamic lists with immutable updates.
 
@@ -326,7 +332,7 @@ ref.TodoList(() =>
 )
 ```
 
-## HTTP Requests
+### HTTP Requests
 
 Handle API calls with reactive loading states and error handling.
 
@@ -393,7 +399,7 @@ const saveNote = (note) => request({
 })
 ```
 
-## Global Events and Node Binding
+### Global Events and Node Binding
 
 Bind properties and events to existing DOM nodes.
 
@@ -419,7 +425,7 @@ ref(myDiv, {
 })
 ```
 
-## Custom Signal Names
+### Custom Signal Names
 
 Customize attribute and property names used throughout the framework.
 
@@ -455,7 +461,7 @@ const counter = SIGNAL(1)
 counter.SIGNAL = 2
 ```
 
-## Best Practices
+### Best Practices
 
 1. **Template-first development**: Write HTML templates with CSS classes, then bind with minimal JavaScript
 2. **Prefer templates over DOM creation**: HTML templates are more maintainable than programmatic DOM creation
@@ -465,11 +471,11 @@ counter.SIGNAL = 2
 6. **Direct DOM access**: Use `ref.Element.ref` when you need direct DOM manipulation
 7. **localStorage prefixes**: Use prefixes like `ref(localStorage, 'app/')` to avoid naming conflicts and organize data
 
-## VanJS Enhancements
+### VanJS Enhancements
 
 RefJs is built on VanJS 1.5.3 and includes several enhancements that make reactive development more powerful:
 
-### Fragment Support
+**Fragment Support**
 Reactive functions can return arrays of elements, enabling dynamic component composition:
 
 ```javascript
@@ -493,7 +499,7 @@ ref.App(conditionalContent)
 
 Templates with multiple root elements are automatically wrapped in document fragments. When a parent container only contains fragment children, the fragments unfold directly into the parent, preserving flexbox and grid layouts that require direct parent-child relationships.
 
-### Explicit Updates
+**Explicit Updates**
 Control when expensive computations run by explicitly declaring dependencies, perfect for tab interfaces and performance optimization:
 
 ```javascript
@@ -525,7 +531,7 @@ const handleRefresh = () => forceUpdate.ref = Date.now()
 
 This prevents unnecessary re-renders and ensures proper cleanup of event listeners and DOM references in complex component hierarchies.
 
-### Shorter Conditional Syntax
+**Shorter Conditional Syntax**
 RefJS enables shorter conditional rendering by supporting the `&&` operator. It automatically filters out `false`, `null`, or `undefined` values but preserves the number zero. To handle zero values, use explicit comparisons like `value !== 0`:
 
 ```javascript
@@ -556,7 +562,7 @@ ref.div(-1)            // Shows "-1"
 
 This makes conditional rendering more concise while preventing `null`, `undefined`, or `false` from appearing as unwanted text in your UI.
 
-### HTML-First Development
+**HTML-First Development**
 Write component structure in HTML templates, then bind behavior with minimal JavaScript:
 
 ```html
@@ -602,13 +608,3 @@ Write component structure in HTML templates, then bind behavior with minimal Jav
 
 This approach separates concerns cleanly: HTML handles structure and styling, JavaScript handles behavior and state management.
 
-## Installation
-
-- Modern browser with ES6 module support
-- No build tools required  
-- Works with any CSS framework
-- Import: `import ref from 'https://cdn.jsdelivr.net/gh/tamasmajer/refjs/ref.min.js'` or from wherever you store it
-
----
-
-**RefJs**: Template-first, definition-driven development.
