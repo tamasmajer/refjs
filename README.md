@@ -15,6 +15,7 @@ A (<2.5KB) reactive client-side library based on [VanJS](https://vanjs.org) for 
 - [Global Events and Node Binding](#global-events-and-node-binding)
 - [Custom Signal Names](#custom-signal-names)
 - [Best Practices](#best-practices)
+- [VanJS Enhancements](#vanjs-enhancements)
 - [Installation](#installation)
 
 ## Quick Start
