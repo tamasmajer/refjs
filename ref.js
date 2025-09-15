@@ -73,7 +73,7 @@ const ui = (REF, VALUE = REF) => {
       curNewDerives = []
       let newDom = runAndCaptureDeps(f, deps, dom)
       if (protoOf(newDom) === arrProto) {
-        let children = newDom.map(n => n?.nodeType ? n : new Text(n || ''))
+        let children = newDom.map(n => n?.nodeType ? n : new Text(n === false ? '' : n ?? ''))
         newDom = createFragment()
         if (f.isTopFragment && newDom.tagName === ':') {
           newDom.isTopFragment = true
@@ -81,7 +81,7 @@ const ui = (REF, VALUE = REF) => {
         }
         add(newDom, ...children)
       }
-      else newDom = newDom?.nodeType ? newDom : new Text(newDom || '')
+      else newDom = newDom?.nodeType ? newDom : new Text(newDom === false ? '' : newDom ?? '')
       for (let d of deps._getters)
         deps._setters.has(d) || (addStatesToGc(d), d._bindings.push(binding))
       for (let l of curNewDerives) l._dom = newDom
