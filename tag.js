@@ -1,8 +1,6 @@
 /**
- * refjs — tiny reactive DOM via `[ref]`
- * - Tags: `ref.div(...)`; Templates: `ref.Card(...)` binds `[ref="Card"]`
- * - Calls: signals (`ref(v)`|`ref(fn)`|`ref(state, viewFn)`), DOM (`ref(root, ...)`), storage (`ref(localStorage, prefix?)`), requests (`ref(fetch, defaults?)`)
- * - Custom instance: `ref.withSignal(attrName, signalKeyName?)` (defaults to `attrName`)
+ * TagUI - Tiny reactive library for building UIs with HTML templates and minimal JS (<2.5KB)
+ * github.com/tamasmajer/tag-ui
  */
 // using vanjs-1.5.3.js (adapted)
 const ui = (REF, VALUE = REF) => {
@@ -200,7 +198,7 @@ const ui = (REF, VALUE = REF) => {
       dom.replaceChildren()
       add(dom, ...children)
     },
-    // Remove `[ref]` attributes to avoid duplicates
+    // Remove tag attributes to avoid duplicates
     removeRefs = (element) => {
       element.querySelectorAll?.(`[${REF}]`).forEach(el => el.removeAttribute(REF))
       if (element.hasAttribute?.(REF)) element.removeAttribute(REF)
@@ -327,4 +325,4 @@ const ui = (REF, VALUE = REF) => {
   return mainProxy
 }
 
-export default ui('ref')
+export default ui('tag')

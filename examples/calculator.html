@@ -4,17 +4,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RefJs Calculator</title>
+  <title>TagUI Calculator</title>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 
 <body class="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-  <div ref="App"></div>
+  <div tag="App"></div>
 
-  <template ref="Calculator">
+  <template tag="Calculator">
     <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm">
       <div class="mb-4">
-        <div ref="Display"
+        <div tag="Display"
           class="bg-gray-900 text-white text-right text-3xl font-mono p-4 rounded-lg min-h-[4rem] flex items-center justify-end overflow-hidden">
           0
         </div>
@@ -22,87 +22,87 @@
 
       <div class="grid grid-cols-4 gap-3">
         <!-- Row 1: Clear, ±, %, ÷ -->
-        <button ref="ClearBtn"
+        <button tag="ClearBtn"
           class="bg-gray-300 hover:bg-gray-400 text-black font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           AC
         </button>
-        <button ref="PlusMinusBtn"
+        <button tag="PlusMinusBtn"
           class="bg-gray-300 hover:bg-gray-400 text-black font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           ±
         </button>
-        <button ref="PercentBtn"
+        <button tag="PercentBtn"
           class="bg-gray-300 hover:bg-gray-400 text-black font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           %
         </button>
-        <button ref="DivideBtn"
+        <button tag="DivideBtn"
           class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           ÷
         </button>
 
         <!-- Row 2: 7, 8, 9, × -->
-        <button ref="Btn7"
+        <button tag="Btn7"
           class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           7
         </button>
-        <button ref="Btn8"
+        <button tag="Btn8"
           class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           8
         </button>
-        <button ref="Btn9"
+        <button tag="Btn9"
           class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           9
         </button>
-        <button ref="MultiplyBtn"
+        <button tag="MultiplyBtn"
           class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           ×
         </button>
 
         <!-- Row 3: 4, 5, 6, - -->
-        <button ref="Btn4"
+        <button tag="Btn4"
           class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           4
         </button>
-        <button ref="Btn5"
+        <button tag="Btn5"
           class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           5
         </button>
-        <button ref="Btn6"
+        <button tag="Btn6"
           class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           6
         </button>
-        <button ref="SubtractBtn"
+        <button tag="SubtractBtn"
           class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           −
         </button>
 
         <!-- Row 4: 1, 2, 3, + -->
-        <button ref="Btn1"
+        <button tag="Btn1"
           class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           1
         </button>
-        <button ref="Btn2"
+        <button tag="Btn2"
           class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           2
         </button>
-        <button ref="Btn3"
+        <button tag="Btn3"
           class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           3
         </button>
-        <button ref="AddBtn"
+        <button tag="AddBtn"
           class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           +
         </button>
 
         <!-- Row 5: 0 (spans 2), ., = -->
-        <button ref="Btn0"
+        <button tag="Btn0"
           class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors col-span-2 min-h-[4rem]">
           0
         </button>
-        <button ref="DecimalBtn"
+        <button tag="DecimalBtn"
           class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           .
         </button>
-        <button ref="EqualsBtn"
+        <button tag="EqualsBtn"
           class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           =
         </button>
@@ -111,13 +111,14 @@
   </template>
 
   <script type="module">
-    import ref from 'https://cdn.jsdelivr.net/gh/tamasmajer/refjs/ref.min.js'
+    // import tag from 'https://cdn.jsdelivr.net/gh/tamasmajer/tag-ui/tag.min.js'
+    import tag from '../tag.js'
 
     // Calculator state
-    const display = ref('0')
-    const previousValue = ref(0)
-    const operation = ref(null)
-    const waitingForOperand = ref(false)
+    const display = tag('0')
+    const previousValue = tag(0)
+    const operation = tag(null)
+    const waitingForOperand = tag(false)
 
     // Format display value
     const formatDisplay = (value) => {
@@ -135,44 +136,44 @@
 
     // Input a digit
     const inputDigit = (digit) => {
-      if (waitingForOperand.ref) {
-        display.ref = String(digit)
-        waitingForOperand.ref = false
+      if (waitingForOperand.tag) {
+        display.tag = String(digit)
+        waitingForOperand.tag = false
       } else {
-        display.ref = display.ref === '0' ? String(digit) : display.ref + digit
+        display.tag = display.tag === '0' ? String(digit) : display.tag + digit
       }
     }
 
     // Input decimal point
     const inputDecimal = () => {
-      if (waitingForOperand.ref) {
-        display.ref = '0.'
-        waitingForOperand.ref = false
-      } else if (display.ref.indexOf('.') === -1) {
-        display.ref = display.ref + '.'
+      if (waitingForOperand.tag) {
+        display.tag = '0.'
+        waitingForOperand.tag = false
+      } else if (display.tag.indexOf('.') === -1) {
+        display.tag = display.tag + '.'
       }
     }
 
     // Clear calculator
     const clear = () => {
-      display.ref = '0'
-      previousValue.ref = 0
-      operation.ref = null
-      waitingForOperand.ref = false
+      display.tag = '0'
+      previousValue.tag = 0
+      operation.tag = null
+      waitingForOperand.tag = false
     }
 
     // Toggle sign
     const toggleSign = () => {
-      const value = parseFloat(display.ref)
+      const value = parseFloat(display.tag)
       if (value !== 0) {
-        display.ref = String(-value)
+        display.tag = String(-value)
       }
     }
 
     // Calculate percentage
     const percentage = () => {
-      const value = parseFloat(display.ref)
-      display.ref = String(value / 100)
+      const value = parseFloat(display.tag)
+      display.tag = String(value / 100)
     }
 
     // Perform calculation
@@ -193,38 +194,38 @@
 
     // Perform operation
     const performOperation = (nextOperation) => {
-      const inputValue = parseFloat(display.ref)
+      const inputValue = parseFloat(display.tag)
 
-      if (previousValue.ref === 0) {
-        previousValue.ref = inputValue
-      } else if (operation.ref) {
-        const currentValue = previousValue.ref || 0
-        const newValue = calculate(currentValue, inputValue, operation.ref)
+      if (previousValue.tag === 0) {
+        previousValue.tag = inputValue
+      } else if (operation.tag) {
+        const currentValue = previousValue.tag || 0
+        const newValue = calculate(currentValue, inputValue, operation.tag)
 
-        display.ref = formatDisplay(newValue)
-        previousValue.ref = newValue
+        display.tag = formatDisplay(newValue)
+        previousValue.tag = newValue
       }
 
-      waitingForOperand.ref = true
-      operation.ref = nextOperation
+      waitingForOperand.tag = true
+      operation.tag = nextOperation
     }
 
     // Handle equals
     const handleEquals = () => {
-      if (operation.ref && !waitingForOperand.ref) {
-        const inputValue = parseFloat(display.ref)
-        const currentValue = previousValue.ref || 0
-        const newValue = calculate(currentValue, inputValue, operation.ref)
+      if (operation.tag && !waitingForOperand.tag) {
+        const inputValue = parseFloat(display.tag)
+        const currentValue = previousValue.tag || 0
+        const newValue = calculate(currentValue, inputValue, operation.tag)
 
-        display.ref = formatDisplay(newValue)
-        previousValue.ref = 0
-        operation.ref = null
-        waitingForOperand.ref = true
+        display.tag = formatDisplay(newValue)
+        previousValue.tag = 0
+        operation.tag = null
+        waitingForOperand.tag = true
       }
     }
 
     // Keyboard support
-    ref(document, {
+    tag(document, {
       onkeydown: (e) => {
         e.preventDefault()
 
@@ -251,8 +252,8 @@
     })
 
     // Render calculator
-    ref.App(ref.Calculator({
-      Display: () => display.ref,
+    tag.App(tag.Calculator({
+      Display: () => display.tag,
 
       // Number buttons
       Btn0: { onclick: () => inputDigit(0) },

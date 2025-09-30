@@ -1,23 +1,25 @@
 {
-  "name": "refjs",
+  "name": "tag-ui",
   "version": "1.0.0",
-  "description": "Small reactive UI library",
-  "main": "ref.min.js",
-  "module": "ref.js",
+  "description": "Tiny reactive library for building UIs with HTML templates and minimal JS",
+  "main": "tag.min.js",
+  "module": "tag.js",
   "type": "module",
   "scripts": {
-    "minify": "uglifyjs ref.js --compress --mangle --mangle-props reserved=['SIGNAL','bind','tags','dom','ui','rawVal','val','oldVal','Content-Type','isConnected','nodeType'] --toplevel -o ref.min.js",
-    "size": "node -e \"const fs=require('fs'),zlib=require('zlib');const min=fs.readFileSync('ref.min.js');console.log('Minified:',min.length,'bytes');console.log('Gzipped:',zlib.gzipSync(min).length,'bytes');\"",
+    "minify": "uglifyjs tag.js --compress --mangle --mangle-props reserved=['SIGNAL','bind','tags','dom','ui','rawVal','val','oldVal','Content-Type','isConnected','nodeType','tag'] --toplevel -o tag.min.js",
+    "size": "node -e \"const fs=require('fs'),zlib=require('zlib');const min=fs.readFileSync('tag.min.js');console.log('Minified:',min.length,'bytes');console.log('Gzipped:',zlib.gzipSync(min).length,'bytes');\"",
     "build": "npm run minify && npm run size"
   },
   "keywords": [
-    "ref",
-    "refjs",
-    "ref.js",
+    "tag",
+    "tag-ui",
+    "tagui",
+    "tag.js",
     "ui",
     "library",
     "tiny",
-    "vanjs"
+    "vanjs",
+    "reactive"
   ],
   "devDependencies": {
     "uglify-js": "^3.19.3"

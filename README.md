@@ -1,13 +1,33 @@
-# RefJs
+# TagUI
 
+A small (<2.5KB) client-side library for building (reactive) user interfaces using HTML templates and minimal JavaScript. Just tag your HTML and your data, and describe your UI in a declarative way. No build tools required.
 
-A small (<2.5KB) client-side library based on [VanJS](https://vanjs.org) for building user interfaces with minimal JavaScript, by supporting not only reactive states and tags, but also reactive DOM nodes, HTML templates, HTTP requests and localStorage.
 
 ## Overview
 
-### Disclaimer
+### Core Concept
 
-This is a proof of concept - a personal experiment shared to gauge interest in simpler alternatives to today's frameworks.
+In TagUI, **tag** means **attach**. Attach unique names to HTML elements. Attach data. Connect them.
+
+```html
+<template tag="Counter">
+  <span tag="Display">0</span>
+  <button tag="Inc">+</button>
+</template>
+```
+
+```javascript
+const count = tag(0)
+const doubled = tag(() => count.tag * 2)
+
+tag.App(tag.Counter({
+  Display: () => `Count: ${count.tag}`,
+  Inc: { onclick: () => count.tag++ }
+}))
+```
+
+Update `count.tag++` → UI updates automatically.
+
 
 ### Working Example
 
@@ -15,23 +35,23 @@ This is a proof of concept - a personal experiment shared to gauge interest in s
 <!DOCTYPE html>
 <html>
 <body>
-  <div ref="App"></div>
+  <div tag="App"></div>
 
-  <template ref="Counter">
-    <span ref="Display">0</span>
-    <button ref="Increase">+</button>
+  <template tag="Counter">
+    <span tag="Display">0</span>
+    <button tag="Increase">+</button>
   </template>
   
   <script type="module">
-    import ref from 'ref.js'
+    import tag from 'tag.js'
     
-    const counter = ref(0)
+    const counter = tag(0)
     
-    const { App, Counter } = ref
+    const { App, Counter } = tag
     App( 
       Counter({
-        Display: () => counter.ref,
-        Increase: { onclick: () => counter.ref += 1 },
+        Display: () => counter.tag,
+        Increase: { onclick: () => counter.tag += 1 },
       })
     )
   </script>
@@ -39,113 +59,150 @@ This is a proof of concept - a personal experiment shared to gauge interest in s
 </html>
 ```
 
+### Disclaimer
+
+This is a proof of concept - a personal experiment shared to gauge interest in simpler alternatives to today's frameworks.
+
 ### Getting Started
 
 1. **Requirements**: Modern browser with ES6 module support, no build tools required
-2. **Import**: `import ref from 'https://cdn.jsdelivr.net/gh/tamasmajer/refjs/ref.min.js'` or from your local copy
-3. **Tag elements**: Add `ref="Name"` to HTML elements and templates
-4. **Create reactive data**: `const counter = ref(0)`
-5. **Bind to templates or other containers**: `ref.App(ref.Counter({ Display: counter }))`
+2. **Import**: `import tag from 'https://cdn.jsdelivr.net/gh/tamasmajer/tag-ui/tag.min.js'`
+3. **Attach names to elements**: `<div tag="App"></div>`
+4. **Attach data to variables**: `const count = tag(0)`
+5. **Connect them**: `tag.App(tag.Counter({ Display: count }))`
 
 
 ### A Single Function
 
-The `ref` function's behavior depend on the first argument's type.
+The `tag` function's behavior depend on the first argument's type.
 
 ```javascript
-ref(firstArgument, ...options)
+tag(firstArgument, ...options)
 ```
 
 | First Argument | Behavior | Example |
 |----------------|----------|---------|
-| **Value** | Creates reactive state | `ref(0)`, `ref({ name: 'John' })` |
-| **Function** | Creates computed state | `ref(() => count.ref * 2)` |
-| **Reactive State + Function** | Creates single-dependency computed | `ref(count, () => expensive())` |
-| **Array + Function** | Creates multi-dependency computed | `ref([count, user], () => expensive())` |
-| **Storage Object** | Creates storage cache | `ref(localStorage, 'app/')` |
-| **`fetch`** | Creates HTTP wrapper | `ref(fetch, { headers: {...} })` |
-| **DOM Node** | Binds to existing element | `ref(window, { onresize: handler })` |
-| **Property Access** | Accesses templates/tags | `ref.Button`, `ref.div` |
+| **Value** | Attach data to variable | `tag(0)`, `tag({ name: 'John' })` |
+| **Function** | Create computed value | `tag(() => count.tag * 2)` |
+| **State + Function** | Computed with explicit dependency | `tag(count, () => expensive())` |
+| **Array + Function** | Computed with multiple dependencies | `tag([count, user], () => expensive())` |
+| **Storage Object** | Create storage cache | `tag(localStorage, 'app/')` |
+| **`fetch`** | Create HTTP wrapper | `tag(fetch, { headers: {...} })` |
+| **DOM Node** | Bind to existing element | `tag(window, { onresize: handler })` |
+| **Property Access** | Access named elements/tags | `tag.Button`, `tag.div` |
 
 ### Examples
 
-**To get a reactive state:**
+**Attach data to variables:**
 ```javascript
-const counter = ref(0)                          // Number state
-const user = ref({ name: 'John' })              // Object state
-const doubled = ref(() => counter.ref * 2)      // Computed state (auto-deps)
-const expensive = ref(counter, () => heavyCalc()) // Computed state (single dep)
-const optimized = ref([counter, user], () => compute()) // Computed state (multi deps)
+const counter = tag(0)
+const user = tag({ name: 'John' })
+const doubled = tag(() => counter.tag * 2)      // Computed (auto-deps)
+const expensive = tag(counter, () => heavyCalc()) // Updates only if 'counter' changes
+const optimized = tag([counter, user], () => compute()) // Updates only if 'counter' or 'user' changes
+```
+
+**Combine reactive data:**
+```javascript
+const firstName = tag('John')
+const lastName = tag('Doe')
+const fullName = tag(() => `${firstName.tag} ${lastName.tag}`)
+
+firstName.tag = 'Jane'  // fullName automatically updates to "Jane Doe"
 ```
 
 **To get a reactive localStorage:**
 ```javascript
-const { settings } = ref(localStorage)           // Auto-sync to localStorage
-const { prefs } = ref(localStorage, 'myapp/')    // With namespace prefix
+const { settings } = tag(localStorage)           // Auto-sync to localStorage
+const { prefs } = tag(localStorage, 'myapp/')    // With namespace prefix
 ```
 
 **To get a modified fetch function:**
 ```javascript
-const request = ref(fetch)                       // Basic HTTP wrapper
-const api = ref(fetch, { url: '/api' })          // With default config
+const request = tag(fetch)                       // Basic HTTP wrapper
+const api = tag(fetch, { url: '/api' })          // With default config
 ```
 
 **To update an existing DOM node:**
 ```javascript
-ref(window, { onresize: () => updateLayout() })     // Bind to window
-ref(document.body, { class: 'dark-theme' })         // Bind to body
-ref(myElement, { onclick: handler }, 'New content') // Bind + add children
-ref(myElement, { Title: 'New Title', Button: { onclick: newHandler } }) // Update descendants by ref names
+tag(window, { onresize: () => updateLayout() })     // Bind to window
+tag(document.body, { class: 'dark-theme' })         // Bind to body
+tag(myElement, { onclick: handler }, 'New content') // Bind + add children
+tag(myElement, { Title: 'New Title', Button: { onclick: newHandler } }) // Update descendants by tag names
 ```
 
 **To get templates, elements, tags:**
 ```javascript
-ref.Counter({ count: () => counter.ref })       // Use template
-ref.MyButton.ref.focus()                        // Direct DOM access
-const { div, span } = ref                       // Create elements
+tag.Counter({ count: () => counter.tag })       // Use template
+tag.MyButton.tag.focus()                        // Direct DOM access
+const { div, span } = tag                       // Create elements
 ```
 
 ### Return Values
 
-**Reactive state** → Access/modify it with `.ref` (configurable)
+**Tagged variable** → Access with `.tag`
 ```javascript
-const count = ref(0)
-count.ref = 5                           // Set value
-console.log(count.ref)                  // Get value
+const count = tag(0)
+count.tag = 5              // Update
+console.log(count.tag)     // Read
 ```
 
-**Storage cache** → Destructure properties  
+**Storage cache** → Destructure tagged variables
 ```javascript
-const { settings, theme } = ref(localStorage, 'app/')
-settings.ref = { darkMode: true }       // Auto-saves to localStorage
+const { settings } = tag(localStorage, 'app/')
+settings.tag = { darkMode: true }  // Auto-saves
 ```
 
 **HTTP wrapper** → Call with config
 ```javascript
-const api = ref(fetch, { url: '/api' })
+const api = tag(fetch, { url: '/api' })
 api({ path: '/users' })                 // Makes request
 ```
 
 **Binding to an exsisting node** → Returns the same node
 ```javascript
-const elem = ref(myDiv, { class: 'active' }).focus()
+const elem = tag(myDiv, { class: 'active' }).focus()
 ```
 
 **Templates** → Returns a clone of the template node, a new DOM element
 ```javascript
-const counter = ref.Counter({ Display: () => count.ref })
+const counter = tag.Counter({ Display: () => count.tag })
 document.body.append(counter)           // Add to page
 ```
 
 **Tags create elements** → They return a new DOM element  
 ```javascript
-const { div, span } = ref
+const { div, span } = tag
 const widget = div({ class: 'widget' }, span('Hello'))
 ```
 
-### Named after Vue's `ref`
+### Declarative UI Development
 
-In Vue `ref` is used to mark up the DOM to access the nodes, and also to create reactive states from primitives or objects. RefJs generalizes this concept, here `ref` can access the marked nodes, and it can be called with special objects to create reactive tools for them.
+**Attach names to HTML elements:**
+```html
+<div tag="App"></div>
+<template tag="Counter">
+  <button tag="Increment">+</button>
+  <span tag="Display">0</span>
+</template>
+```
+
+**Attach data to variables:**
+```javascript
+const count = tag(0)
+const user = tag({ name: 'Alice' })
+const doubled = tag(() => count.tag * 2)  // Computed from other data
+```
+
+**Connect and react:**
+```javascript
+tag.App(tag.Counter({
+  Display: () => `${count.tag} × 2 = ${doubled.tag}`,
+  Increment: { onclick: () => count.tag++ }
+}))
+```
+
+When you read `.tag` inside a function, TagUI tracks the dependency. Update the data → UI updates automatically.
 
 ## Features
 
@@ -163,80 +220,67 @@ In Vue `ref` is used to mark up the DOM to access the nodes, and also to create 
 
 ### Reactive States
 
-Reactive signals update the UI when data changes.
+Attach data to variables to make them reactive.
 
-**Basic creation and access:**
+**Basic usage:**
 ```javascript
-const counter = ref(0)
-const user = ref({ name: 'John', age: 25 })
+const counter = tag(0)
+const user = tag({ name: 'John', age: 25 })
 
-// Access/modify with .ref property
-counter.ref = 10
-user.ref = { ...user.ref, age: 26 }  // Always replace, never mutate
+// Access/modify with .tag
+counter.tag = 10
+user.tag = { ...user.tag, age: 26 }  // Always replace, never mutate
 ```
 
 **Computed values:**
-Derived state recalculates when dependencies change.
 ```javascript
-const doubled = ref(() => counter.ref * 2)
-const greeting = ref(() => `Hello ${user.ref.name}!`)
+const price = tag(100)
+const quantity = tag(2)
+const total = tag(() => price.tag * quantity.tag)
+
+price.tag = 150  // total automatically becomes 300
 ```
 
 **Performance optimization:**
-Explicit dependencies control when expensive computations run.
 ```javascript
-// Only updates when specific dependencies change
-const result = ref([dep1, dep2], () => compute())
+const result = tag([dep1, dep2], () => compute())  // Only updates when deps change
 ```
 
 **Persistent storage:**
-Sync reactive state with browser storage.
 ```javascript
-const { settings } = ref(localStorage)   // Auto-saves to localStorage
-const { session } = ref(sessionStorage)  // Auto-saves to sessionStorage
+const { settings } = tag(localStorage)
+const { userPrefs } = tag(localStorage, 'myapp/')
 
-// With prefixes for namespacing and organization
-const { userPrefs, appConfig } = ref(localStorage, 'myapp/')   // Keys: myapp/userPrefs, myapp/appConfig
-const { tempData } = ref(sessionStorage, 'session/')          // Keys: session/tempData
-
-// Multiple apps can coexist without conflicts
-const { theme, layout } = ref(localStorage, 'editor/')        // Keys: editor/theme, editor/layout
-const { bookmarks } = ref(localStorage, 'browser/')           // Keys: browser/bookmarks
+settings.tag = { darkMode: true }  // Auto-saves
 ```
 
 ### Templates and Elements
 
-HTML templates with ref attributes separate structure from behavior.
-
 **Template behavior:**
-- `<template ref="Name">` → `ref.Name()` creates new instances (clones)
-- `<div ref="Name">` → `ref.Name()` updates element in-place
+- `<template tag="Name">` → `tag.Name()` clones the template
+- `<div tag="Name">` → `tag.Name()` updates element in-place
 
 **Naming convention:**
-Use uppercase names for ref attributes. This is required to distinguish DOM attributes from descendant updates.
-- Required: `ref="Counter"` 
-- Never: `ref="counter"`
+Use uppercase names: `tag="Counter"` not `tag="counter"`
 
 **Element access:**
-Access the actual DOM element using the `.ref` property:
 ```javascript
-const button = ref.MyButton.ref  // Direct DOM element access
-button.classList.add('active')   // Direct DOM manipulation
-ref.MyButton.ref.focus()         // Call DOM methods directly
+const button = tag.MyButton.tag  // Get the DOM element
+button.focus()
 ```
 
 **Template binding patterns:**
 ```javascript
-ref.Counter({
+tag.Counter({
   Display: 'text only',                           // Content only
   Button: { onclick: handler },                   // Properties only
   Link: [{ href: '/page', class: 'active' }, 'Visit']  // Properties + content
 })
 
 // Mixed format: combine element properties with descendant updates
-ref.UserCard({
+tag.UserCard({
   class: 'active',              // lowercase = element property  
-  UserName: user.ref.name,      // Uppercase = descendant content
+  UserName: user.tag.name,      // Uppercase = descendant content
   EditBtn: { onclick: edit }    // Uppercase = descendant properties
 })
 ```
@@ -244,19 +288,19 @@ ref.UserCard({
 **Element operations:**
 ```javascript
 // Properties only (keeps existing children)
-ref.Element({ onclick: handler, class: 'active' })
+tag.Element({ onclick: handler, class: 'active' })
 
 // Properties + replace all children
-ref.Element([{ onclick: handler }, 'new content'])
+tag.Element([{ onclick: handler }, 'new content'])
 
-// Update descendants by ref names
-ref.Element({ 
+// Update descendants by tag names
+tag.Element({ 
   Child1: 'new text', 
   Child2: { class: 'highlight' } 
 })
 
 // Mixed format: element properties + descendant updates (case sensitive)
-ref.Element({ 
+tag.Element({ 
   class: 'container',           // lowercase = element property
   Title: 'New title',           // Uppercase = descendant update
   Button: { onclick: handler }  // Uppercase = descendant update
@@ -269,12 +313,12 @@ Build UI elements programmatically.
 
 **Element destructuring:**
 ```javascript
-const { div, span, button, h1 } = ref
+const { div, span, button, h1 } = tag
 
 const widget = div({ class: 'widget' },
   h1('Title'),
-  span(() => counter.ref),
-  button({ onclick: () => counter.ref++ }, 'Increment')
+  span(() => counter.tag),
+  button({ onclick: () => counter.tag++ }, 'Increment')
 )
 ```
 
@@ -287,39 +331,33 @@ All content compiles to `[{ props }, ...children]`.
 **Reactive content:**
 Elements update automatically when reactive dependencies change.
 ```javascript
-span(() => counter.ref)  // Updates automatically
+span(() => counter.tag)  // Updates automatically
 div({ 
-  class: () => counter.ref % 2 ? 'odd' : 'even' 
-}, () => `Count: ${counter.ref}`)
+  class: () => counter.tag % 2 ? 'odd' : 'even' 
+}, () => `Count: ${counter.tag}`)
 ```
 
 ### List Handling
 
-Manage dynamic lists with immutable updates.
-
 **Always replace, never mutate:**
-Replace arrays and objects completely to trigger reactive updates.
 ```javascript
 // ✅ Correct
-items.ref = [...items.ref, newItem]
-items.ref = items.ref.filter(item => item.id !== targetId)
-items.ref = items.ref.map(item => 
-  item.id === targetId ? { ...item, updated: true } : item
-)
+items.tag = [...items.tag, newItem]
+items.tag = items.tag.filter(item => item.id !== targetId)
 
-// ❌ Wrong - never mutate
-items.ref.push(newItem)
-items.ref[0] = newValue
+// ❌ Wrong
+items.tag.push(newItem)
+items.tag[0] = newValue
 ```
 
 **Rendering lists:**
 Map arrays to DOM elements with empty state handling.
 ```javascript
-ref.TodoList(() => 
-  todos.ref.length === 0 
+tag.TodoList(() => 
+  todos.tag.length === 0 
     ? div({ class: 'empty' }, 'No todos yet!')
-    : todos.ref.map(todo => 
-        ref.TodoItem({ 
+    : todos.tag.map(todo => 
+        tag.TodoItem({ 
           Text: todo.text,
           Delete: { onclick: () => removeTodo(todo.id) }
         })
@@ -333,14 +371,14 @@ Handle API calls with reactive loading states and error handling.
 
 **Basic usage:**
 ```javascript
-const request = ref(fetch)
+const request = tag(fetch)
 const users = await request({ url: '/api/users' })
 ```
 
 **Default configuration:**
 Create request functions with default settings.
 ```javascript
-const api = ref(fetch, { 
+const api = tag(fetch, { 
   headers: { Authorization: `Bearer ${token}` },
   url: 'https://api.example.com'
 })
@@ -357,13 +395,13 @@ const load = (id, filter) => request({
   url: 'https://api.example.com',
   path: '/append/' + id,                    // optional path append
   query: { filter },                        // optional query parameters
-  body: input.ref,                          // POST body (auto-JSON if object, method: 'POST' automatic)
-  loading: url => loading.ref = url ? 'loading' : '',  // Called before/after
+  body: input.tag,                          // POST body (auto-JSON if object, method: 'POST' automatic)
+  loading: url => loading.tag = url ? 'loading' : '',  // Called before/after
   failed: ({ response, error }) => {        // Error handling with more details
     if (response) console.log('failed', response.status) 
     else console.log('error', error)
   },
-  result: data => output.ref = data         // Success callback
+  result: data => output.tag = data         // Success callback
 })
 ```
 
@@ -390,7 +428,7 @@ const endpoint = { ...session, path: '/notes' }
 const saveNote = (note) => request({ 
   ...endpoint, 
   body: note,                               // method: 'POST' automatic when body present
-  result: (data) => notes.ref = [...notes.ref, data]
+  result: (data) => notes.tag = [...notes.tag, data]
 })
 ```
 
@@ -401,22 +439,22 @@ Bind properties and events to existing DOM nodes.
 **Direct node binding:**
 ```javascript
 // Bind to global objects
-ref(window, { 
+tag(window, { 
   onresize: () => updateLayout(),
   onbeforeunload: (e) => e.preventDefault()
 })
 
-ref(document, { onclick: handleGlobalClick })
+tag(document, { onclick: handleGlobalClick })
 
-ref(document.body, { onkeydown: (e) => {
+tag(document.body, { onkeydown: (e) => {
   if (e.key === 'Escape') closeModal()
 }})
 
 // Bind to any DOM element
 const myDiv = document.getElementById('myDiv')
-ref(myDiv, {
+tag(myDiv, {
   onclick: handleClick,
-  class: () => isActive.ref ? 'active' : ''
+  class: () => isActive.tag ? 'active' : ''
 })
 ```
 
@@ -426,31 +464,31 @@ Customize attribute and property names used throughout the framework.
 
 **Create custom instances:**
 
-Vue-like ref attribute, ref function, and .value:
+Vue-like tag attribute, tag function, and .value:
 ```javascript
-import RefJs from 'ref.js'
-const ref = new RefJs('ref', 'value'), $refs = ref
-// <div ref="App"></div>
-$refs.App($refs.Counter(...))
-const counter = ref(1)
+import Tag from 'tag.js'
+const tag = new Tag('tag', 'value'), $tags = tag
+// <div tag="App"></div>
+$tags.App($tags.Counter(...))
+const counter = tag(1)
 counter.value = 2
 ```
 
-Ref-def variant:
+Tag-def variant:
 ```javascript
-import RefJs from 'ref.js'
-const ref = new RefJs('ref', 'def'), def = ref
-// <div ref="App"></div>
-ref.App(ref.Counter(...))
+import Tag from 'tag.js'
+const tag = new Tag('tag', 'def'), def = tag
+// <div tag="App"></div>
+tag.App(tag.Counter(...))
 const counter = def(1)
 counter.def = 2
 ```
 
 UI variant:
 ```javascript
-import RefJs from 'ref.js'
-const ui = new RefJs('ref', 'SIGNAL'), SIGNAL = ui
-// <div ref="App"></div>
+import Tag from 'tag.js'
+const ui = new Tag('tag', 'SIGNAL'), SIGNAL = ui
+// <div tag="App"></div>
 ui.App(ui.Counter(...))
 const counter = SIGNAL(1)
 counter.SIGNAL = 2
@@ -458,38 +496,38 @@ counter.SIGNAL = 2
 
 ### Best Practices
 
-1. **Template-first development**: Write HTML templates with CSS classes, then bind with minimal JavaScript
-2. **Prefer templates over DOM creation**: HTML templates are more maintainable than programmatic DOM creation
-3. **Always replace arrays**: Use spread operator, `filter()`, `map()` - never `push()`, `splice()`, or direct mutation
-4. **Use uppercase ref names**: `ref="UserCard"` is required for proper distinction from DOM attributes
-5. **Explicit dependencies**: Use `ref([deps], fn)` for performance with expensive computations
-6. **Direct DOM access**: Use `ref.Element.ref` when you need direct DOM manipulation
-7. **localStorage prefixes**: Use prefixes like `ref(localStorage, 'app/')` to avoid naming conflicts and organize data
+1. **Template-first**: Write HTML templates with CSS, bind with minimal JavaScript
+2. **Prefer templates**: HTML templates are more maintainable than DOM creation
+3. **Always replace**: Use spread/filter/map - never mutate with push/splice
+4. **Uppercase names**: `tag="UserCard"` required to distinguish from attributes
+5. **Explicit dependencies**: Use `tag([deps], fn)` for expensive computations
+6. **Direct DOM access**: `tag.Element.tag` gets the DOM element
+7. **localStorage prefixes**: Use `tag(localStorage, 'app/')` to avoid conflicts
 
 ### VanJS Enhancements
 
-RefJs is built on VanJS 1.5.3 and includes several enhancements that make reactive development more powerful:
+TagUI is built on VanJS 1.5.3 and includes several enhancements that make reactive development more powerful:
 
 **Fragment Support**
 Reactive functions can return arrays of elements, enabling dynamic component composition:
 
 ```javascript
-const renderItems = () => items.ref.map(item => 
-  ref.div({ class: 'item' }, item.name)
+const renderItems = () => items.tag.map(item => 
+  tag.div({ class: 'item' }, item.name)
 )
 
-ref.Container(renderItems)  // Automatically handles array of elements
+tag.Container(renderItems)  // Automatically handles array of elements
 ```
 
 Fragment support also works with conditional rendering:
 ```javascript
 const conditionalContent = () => [
-  isLoading.ref && ref.div('Loading...'),
-  hasError.ref && ref.div({ class: 'error' }, error.ref),
-  data.ref && ref.div('Content loaded')
+  isLoading.tag && tag.div('Loading...'),
+  hasError.tag && tag.div({ class: 'error' }, error.tag),
+  data.tag && tag.div('Content loaded')
 ].filter(Boolean)
 
-ref.App(conditionalContent)
+tag.App(conditionalContent)
 ```
 
 Templates with multiple root elements are automatically wrapped in document fragments. When a parent container only contains fragment children, the fragments unfold directly into the parent, preserving flexbox and grid layouts that require direct parent-child relationships.
@@ -499,15 +537,15 @@ Control when expensive computations run by explicitly declaring dependencies, pe
 
 ```javascript
 // Tab switching: only update when activeTab changes, not when content changes
-const tabContent = ref([activeTab], () => 
-  activeTab.ref === 'users' ? 
-    ref.UserList({ users: allUsers.ref }) :  // Won't re-render when allUsers changes
-  activeTab.ref === 'settings' ?
-    ref.SettingsPanel({ config: appConfig.ref }) :  // Won't re-render when appConfig changes
-    ref.div('Select a tab')
+const tabContent = tag([activeTab], () => 
+  activeTab.tag === 'users' ? 
+    tag.UserList({ users: allUsers.tag }) :  // Won't re-render when allUsers changes
+  activeTab.tag === 'settings' ?
+    tag.SettingsPanel({ config: appConfig.tag }) :  // Won't re-render when appConfig changes
+    tag.div('Select a tab')
 )
 
-ref.App(tabContent)
+tag.App(tabContent)
 ```
 
 Without explicit dependencies, this would re-render whenever `allUsers` or `appConfig` changes, even when those tabs aren't visible. With explicit updates, it only re-renders when `activeTab` changes.
@@ -515,44 +553,44 @@ Without explicit dependencies, this would re-render whenever `allUsers` or `appC
 You can also force updates for stateless calls:
 ```javascript
 // Force update on user action, regardless of other dependencies
-const refreshData = ref([forceUpdate], () => {
+const refreshData = tag([forceUpdate], () => {
   // This runs when forceUpdate changes, ignoring other state changes
   return fetchAndRenderExpensiveData()
 })
 
 // Trigger refresh manually
-const handleRefresh = () => forceUpdate.ref = Date.now()
+const handleRefresh = () => forceUpdate.tag = Date.now()
 ```
 
 This prevents unnecessary re-renders and ensures proper cleanup of event listeners and DOM references in complex component hierarchies.
 
 **Shorter Conditional Syntax**
-RefJS enables shorter conditional rendering by supporting the `&&` operator. It automatically filters out `false`, `null`, or `undefined` values but preserves the number zero. To handle zero values, use explicit comparisons like `value !== 0`:
+TagUI enables shorter conditional rendering by supporting the `&&` operator. It automatically filters out `false`, `null`, or `undefined` values but preserves the number zero. To handle zero values, use explicit comparisons like `value !== 0`:
 
 ```javascript
 // Concise conditional syntax - no ternary needed
-const message = () => user.ref && `Welcome, ${user.ref.name}!`
-const errorDisplay = () => hasError.ref && ref.div({ class: 'error' }, 'Something went wrong')
-const count = () => items.ref.length > 0 && ref.span(`${items.ref.length} items`)
+const message = () => user.tag && `Welcome, ${user.tag.name}!`
+const errorDisplay = () => hasError.tag && tag.div({ class: 'error' }, 'Something went wrong')
+const count = () => items.tag.length > 0 && tag.span(`${items.tag.length} items`)
 
 // Instead of verbose ternaries
-const message = () => user.ref ? `Welcome, ${user.ref.name}!` : null
-const errorDisplay = () => hasError.ref ? ref.div({ class: 'error' }, 'Something went wrong') : null
-const count = () => items.ref.length > 0 ? ref.span(`${items.ref.length} items`) : null
+const message = () => user.tag ? `Welcome, ${user.tag.name}!` : null
+const errorDisplay = () => hasError.tag ? tag.div({ class: 'error' }, 'Something went wrong') : null
+const count = () => items.tag.length > 0 ? tag.span(`${items.tag.length} items`) : null
 ```
 
 Smart value handling preserves meaningful content while filtering out display issues:
 
 ```javascript
 // These become empty strings
-ref.div(null)           // Empty div
-ref.span(undefined)     // Empty span  
-ref.p(false && 'text')  // Empty paragraph
+tag.div(null)           // Empty div
+tag.span(undefined)     // Empty span  
+tag.p(false && 'text')  // Empty paragraph
 
 // These preserve the actual value (numbers and strings are kept)
-ref.h1(0)              // Shows "0"
-ref.span('')           // Shows empty string
-ref.div(-1)            // Shows "-1"
+tag.h1(0)              // Shows "0"
+tag.span('')           // Shows empty string
+tag.div(-1)            // Shows "-1"
 ```
 
 This makes conditional rendering more concise while preventing `null`, `undefined`, or `false` from appearing as unwanted text in your UI.
@@ -562,44 +600,43 @@ Write component structure in HTML templates, then bind behavior with minimal Jav
 
 ```html
 <!-- Define structure in HTML -->
-<template ref="TodoApp">
+<template tag="TodoApp">
   <div class="todo-container">
-    <input ref="NewTodo" placeholder="Add todo..." />
-    <button ref="AddBtn" class="btn-primary">Add</button>
-    <div ref="TodoList" class="todo-list"></div>
-    <div ref="Summary" class="summary"></div>
+    <input tag="NewTodo" placeholder="Add todo..." />
+    <button tag="AddBtn" class="btn-primary">Add</button>
+    <div tag="TodoList" class="todo-list"></div>
+    <div tag="Summary" class="summary"></div>
   </div>
 </template>
 
 <script type="module">
-  import ref from 'ref.js'
+  import tag from 'tag.js'
   
-  const todos = ref([])
-  const newTodo = ref('')
+  const todos = tag([])
+  const newTodo = tag('')
   
   // Bind behavior to HTML structure
-  ref.App(
-    ref.TodoApp({
+  tag.App(
+    tag.TodoApp({
       NewTodo: { 
-        oninput: e => newTodo.ref = e.target.value,
-        value: () => newTodo.ref 
+        oninput: e => newTodo.tag = e.target.value,
+        value: () => newTodo.tag 
       },
       AddBtn: { 
         onclick: () => {
-          if (newTodo.ref.trim()) {
-            todos.ref = [...todos.ref, { id: Date.now(), text: newTodo.ref }]
-            newTodo.ref = ''
+          if (newTodo.tag.trim()) {
+            todos.tag = [...todos.tag, { id: Date.now(), text: newTodo.tag }]
+            newTodo.tag = ''
           }
         }
       },
-      TodoList: () => todos.ref.map(todo => 
-        ref.div({ class: 'todo-item' }, todo.text)
+      TodoList: () => todos.tag.map(todo => 
+        tag.div({ class: 'todo-item' }, todo.text)
       ),
-      Summary: () => `${todos.ref.length} todos`
+      Summary: () => `${todos.tag.length} todos`
     })
   )
 </script>
 ```
 
 This approach separates concerns cleanly: HTML handles structure and styling, JavaScript handles behavior and state management.
-
