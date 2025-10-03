@@ -170,15 +170,15 @@ const ref = new Box('ref', 'value')
 ```javascript
 // Automatically refetch when dependencies change
 const remote = box(fetch)
-const postId = box(1)
-const post = box(() => remote({ 
-  url: `https://api.example.com/posts/${postId.box}` 
+const docId = box(1)
+const doc = box(() => remote({ 
+  url: `https://api.example.com/posts/${docId.box}` 
 }))
 
 // Usage in templates
 box.PostView({
-  Title: () => post.box?.title || 'Loading...',
-  Content: () => post.box?.body || ''
+  Title: () => doc.box?.title || 'Loading...',
+  Content: () => doc.box?.body || ''
 })
 ```
 

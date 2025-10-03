@@ -190,6 +190,7 @@ const widget = div({ class: 'widget' }, span('Hello'))
 - [Creating Elements with Tags](#creating-elements-with-tags)
 - [List Handling](#list-handling)
 - [Remote Boxes](#remote-boxes)
+- [Local Box from/to Remote Box](#local-box-fromto-remote-box)
 - [Best Practices](#best-practices)
 - [VanJS Enhancements](#vanjs-enhancements)
 
@@ -436,6 +437,52 @@ const saveNote = (note) => remote({
 })
 ```
 
+### Local Box from/to Remote Box
+
+**Remote to Local**
+```javascript
+// Automatically refetch when dependencies change
+const remote = box(fetch)
+const docId = box(1)
+const doc = box(() => remote({ 
+  url: `https://api.example.com/posts/${docId.box}` 
+}))
+
+// Usage in templates
+box.PostView({
+  Title: () => doc.box?.title || 'Loading...',
+  Content: () => doc.box?.body || ''
+})
+```
+
+**Editable Remote Doc**
+```javascript
+// Load remote doc when docId changes
+const remote = box(fetch)
+const docId = box(456)
+const serverDoc = box(() => remote({ 
+  url: `/api/documents/${docId.box}`,
+  loading: url => isLoading.box = !!url
+}))
+
+// Create local
+const localDoc = box({})
+
+// Initialize local from remote
+box(() => {
+  if (serverDoc.box && !localDoc.box.id) {
+    localDoc.box = { ...serverDoc.box }
+  }
+})
+
+// Save local to remote
+const save = () => remote({
+  url: `/api/documents/${docId.box}`,
+  method: 'PATCH',                         // Explicit method for PATCH (not auto-detected)
+  body: localDoc.box,
+  result: () => showSaved.box = true
+})
+```
 
 
 ### Customizing the Library
