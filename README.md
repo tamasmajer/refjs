@@ -184,19 +184,18 @@ const widget = div({ class: 'widget' }, span('Hello'))
 
 ## Features
 
-- [Reactive States](#reactive-states)
-- [Templates and Elements](#templates-and-elements)
-- [DOM Creation](#dom-creation)
+- [Data Boxes](#data-boxes)
+- [Elements with Box Attributes](#elements-with-box-attributes)
+- [Elements without Box Attributes](#elements-without-box-attributes)
+- [Creating Elements with Tags](#creating-elements-with-tags)
 - [List Handling](#list-handling)
 - [HTTP Requests](#http-requests)
-- [Global Events and Node Binding](#global-events-and-node-binding)
-- [Custom Signal Names](#custom-signal-names)
 - [Best Practices](#best-practices)
 - [VanJS Enhancements](#vanjs-enhancements)
 
 
 
-### Reactive States
+### Data Boxes
 
 Box your data to make it reactive.
 
@@ -232,7 +231,7 @@ const { userPrefs } = box(localStorage, 'myapp/')
 settings.box = { darkMode: true }  // Auto-saves
 ```
 
-### Templates and Elements
+### Elements with Box Attributes
 
 **Template behavior:**
 - `<template box="Name">` → `box.Name()` clones the template
@@ -285,7 +284,33 @@ box.Element({
 })
 ```
 
-### Creating Element Boxes
+### Elements without Box Attributes
+
+Bind properties and events to existing DOM nodes.
+
+**Direct node binding:**
+```javascript
+// Bind to global objects
+box(window, { 
+  onresize: () => updateLayout(),
+  onbeforeunload: (e) => e.preventDefault()
+})
+
+box(document, { onclick: handleGlobalClick })
+
+box(document.body, { onkeydown: (e) => {
+  if (e.key === 'Escape') closeModal()
+}})
+
+// Bind to any DOM element
+const myDiv = document.getElementById('myDiv')
+box(myDiv, {
+  onclick: handleClick,
+  class: () => isActive.box ? 'active' : ''
+})
+```
+
+### Creating Elements with Tags
 
 Build UI elements programmatically.
 
@@ -411,7 +436,7 @@ const saveNote = (note) => remote({
 })
 ```
 
-### Boxing DOM Nodes
+### Elements without Box Attributes
 
 Bind properties and events to existing DOM nodes.
 
