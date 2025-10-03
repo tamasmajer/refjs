@@ -7,7 +7,7 @@ Think in boxes. A tiny (<2.5KB) library for building reactive UIs by composing s
 
 ### Core Concept
 
-Create boxes from your HTML, or your data, then combine them together.
+Put your HTML elements and your data into boxes, then compose them together.
 
 ```html
 <template box="Counter">
@@ -43,7 +43,7 @@ Update `count.box++` → UI updates automatically.
   </template>
   
   <script type="module">
-    import box from 'box.js'
+    import box from 'magic-box.js'
     
     const counter = box(0)
     
@@ -72,9 +72,9 @@ This is a proof of concept - a personal experiment shared to gauge interest in s
 5. **Compose them**: `box.App(box.Counter({ Display: count }))`
 
 
-### A Single Function
+### Creating a Box
 
-The `box` function's behavior depend on the first argument's type.
+The type of the box depends on the type of the first argument.
 
 ```javascript
 box(firstArgument, ...options)
@@ -82,14 +82,14 @@ box(firstArgument, ...options)
 
 | First Argument | Behavior | Example |
 |----------------|----------|---------|
-| **Value** | Box a value as state | `box(0)`, `box({ name: 'John' })` |
-| **Function** | Create computed value | `box(() => count.box * 2)` |
-| **State + Function** | Computed with explicit dependency | `box(count, () => expensive())` |
-| **Array + Function** | Computed with multiple dependencies | `box([count, user], () => expensive())` |
-| **Storage Object** | Create storage cache | `box(localStorage, 'app/')` |
+| **Data** | Box data we can update later | `box(0)`, `box({ name: 'John' })` |
+| **Function** | Box a derived value | `box(() => count.box * 2)` |
+| **Box + Function** | Update only when this box changes | `box(count, () => expensive())` |
+| **Boxes + Function** | Update only when these boxes change | `box([count, user], () => expensive())` |
+| **Storage Object** | Box localStorage namespace | `box(localStorage, 'app/')` |
 | **`fetch`** | Create a remote box | `const remote = box(fetch)` |
-| **DOM Node** | Bind to existing element | `box(window, { onresize: handler })` |
-| **Property Access** | Access named elements/boxes | `box.Button`, `box.div` |
+| **DOM Node** | Box an existing element | `box(window, { onresize: handler })` |
+| **Property Access** | Find boxes by name | `box.Button`, `box.div` |
 
 ### Examples
 
@@ -102,7 +102,7 @@ const expensive = box(counter, () => heavyCalc()) // Updates only if 'counter' c
 const optimized = box([counter, user], () => compute()) // Updates only if 'counter' or 'user' changes
 ```
 
-**Combine reactive data:**
+**Combine the contents of boxes:**
 ```javascript
 const firstName = box('John')
 const lastName = box('Doe')
@@ -111,19 +111,19 @@ const fullName = box(() => `${firstName.box} ${lastName.box}`)
 firstName.box = 'Jane'  // fullName automatically updates to "Jane Doe"
 ```
 
-**To get a reactive localStorage:**
+**Create boxes from localStorage:**
 ```javascript
 const { settings } = box(localStorage)           // Auto-sync to localStorage
 const { prefs } = box(localStorage, 'myapp/')    // With namespace prefix
 ```
 
-**To create a remote box:**
+**Create a remote box we can talk to:**
 ```javascript
 const remote = box(fetch)                        // Box the ability to ask a server
 const api = box(fetch, { url: '/api' })          // With default config
 ```
 
-**To update an existing DOM node:**
+**Create boxes from DOM nodes:**
 ```javascript
 box(window, { onresize: () => updateLayout() })     // Bind to window
 box(document.body, { class: 'dark-theme' })         // Bind to body
@@ -131,7 +131,7 @@ box(myElement, { onclick: handler }, 'New content') // Bind + add children
 box(myElement, { Title: 'New Title', Button: { onclick: newHandler } }) // Update descendants by box names
 ```
 
-**To get templates, elements, boxes:**
+**Find boxes by name:**
 ```javascript
 box.Counter({ count: () => counter.box })       // Use template
 box.MyButton.box.focus()                        // Direct DOM access
@@ -140,37 +140,37 @@ const { div, span } = box                       // Create elements
 
 ### Return Values
 
-**Boxed variable** → Access with `.box`
+**Data box** → Access with `.box`
 ```javascript
 const count = box(0)
 count.box = 5              // Update
 console.log(count.box)     // Read
 ```
 
-**Storage cache** → Destructure boxed variables
+**localStorage box** → Destructure boxes
 ```javascript
 const { settings } = box(localStorage, 'app/')
 settings.box = { darkMode: true }  // Auto-saves
 ```
 
-**HTTP wrapper** → Call with config
+**Remote box** → Call to make requests
 ```javascript
 const api = box(fetch, { url: '/api' })
 api({ path: '/users' })                 // Makes request
 ```
 
-**Binding to an exsisting node** → Returns the same node
+**DOM node box** → Returns the same node
 ```javascript
 const elem = box(myDiv, { class: 'active' }).focus()
 ```
 
-**Templates** → Returns a clone of the template node, a new DOM element
+**Template box** → Returns a clone of the template node, a new DOM element
 ```javascript
 const counter = box.Counter({ Display: () => count.box })
 document.body.append(counter)           // Add to page
 ```
 
-**Boxes create elements** → They return a new DOM element  
+**Element boxes** → Return new DOM elements
 ```javascript
 const { div, span } = box
 const widget = div({ class: 'widget' }, span('Hello'))
@@ -202,7 +202,7 @@ box.App(box.Counter({
 }))
 ```
 
-When you read `.box` inside a function, MagicBox tracks the dependency. Update the data → UI updates automatically.
+When you use a box inside another box, MagicBox tracks the dependency. Update the inner box → outer box updates automatically.
 
 ## Features
 
@@ -246,7 +246,7 @@ price.box = 150  // total automatically becomes 300
 const result = box([dep1, dep2], () => compute())  // Only updates when deps change
 ```
 
-**Persistent storage:**
+**Persistent boxes:**
 ```javascript
 const { settings } = box(localStorage)
 const { userPrefs } = box(localStorage, 'myapp/')
@@ -307,7 +307,7 @@ box.Element({
 })
 ```
 
-### DOM Creation
+### Creating Element Boxes
 
 Build UI elements programmatically.
 
@@ -433,7 +433,7 @@ const saveNote = (note) => remote({
 })
 ```
 
-### Global Events and Node Binding
+### Boxing DOM Nodes
 
 Bind properties and events to existing DOM nodes.
 
@@ -459,7 +459,7 @@ box(myDiv, {
 })
 ```
 
-### Custom Signal Names
+### Customizing the Library
 
 Customize attribute and property names used throughout the framework.
 
@@ -467,7 +467,7 @@ Customize attribute and property names used throughout the framework.
 
 Vue-like box attribute, box function, and .value:
 ```javascript
-import Box from 'box.js'
+import Box from 'magic-box.js'
 const box = new Box('box', 'value'), $boxes = box
 // <div box="App"></div>
 $boxes.App($boxes.Counter(...))
@@ -477,7 +477,7 @@ counter.value = 2
 
 Box-def variant:
 ```javascript
-import Box from 'box.js'
+import Box from 'magic-box.js'
 const box = new Box('box', 'def'), def = box
 // <div box="App"></div>
 box.App(box.Counter(...))
@@ -487,7 +487,7 @@ counter.def = 2
 
 UI variant:
 ```javascript
-import Box from 'box.js'
+import Box from 'magic-box.js'
 const ui = new Box('box', 'SIGNAL'), SIGNAL = ui
 // <div box="App"></div>
 ui.App(ui.Counter(...))
@@ -611,7 +611,7 @@ Write component structure in HTML templates, then bind behavior with minimal Jav
 </template>
 
 <script type="module">
-  import box from 'box.js'
+  import box from 'magic-box.js'
   
   const todos = box([])
   const newTodo = box('')

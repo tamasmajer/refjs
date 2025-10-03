@@ -1,5 +1,5 @@
 /**
- * MagicBox - Tiny reactive library for building UIs with HTML templates and minimal JS (<2.5KB)
+ * MagicBox - Think in boxes. A tiny (<2.5KB) library for building reactive UIs by composing simple HTML containers.
  * github.com/tamasmajer/magic-box
  */
 // using vanjs-1.5.3.js (adapted)
