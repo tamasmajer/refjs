@@ -9,24 +9,30 @@ Think in boxes. A tiny (<2.5KB) library for building reactive UIs by composing s
 
 Put your HTML elements and your data into boxes, then compose them together.
 
+**Name your HTML elements:**
 ```html
+<div box="App"></div>
 <template box="Counter">
+  <button box="Increment">+</button>
   <span box="Display">0</span>
-  <button box="Inc">+</button>
 </template>
 ```
 
+**Box your data:**
 ```javascript
 const count = box(0)
 const doubled = box(() => count.box * 2)
+```
 
+**Compose and react:**
+```javascript
 box.App(box.Counter({
-  Display: () => `Count: ${count.box}`,
-  Inc: { onclick: () => count.box++ }
+  Display: () => `${count.box} × 2 = ${doubled.box}`,
+  Increment: { onclick: () => count.box++ }
 }))
 ```
 
-Update `count.box++` → UI updates automatically.
+When you use a box inside another box, MagicBox tracks the dependency. Update the inner box → outer box updates automatically.
 
 
 ### Working Example
@@ -175,34 +181,6 @@ document.body.append(counter)           // Add to page
 const { div, span } = box
 const widget = div({ class: 'widget' }, span('Hello'))
 ```
-
-### Declarative UI Development
-
-**Name your HTML elements:**
-```html
-<div box="App"></div>
-<template box="Counter">
-  <button box="Increment">+</button>
-  <span box="Display">0</span>
-</template>
-```
-
-**Box your data:**
-```javascript
-const count = box(0)
-const user = box({ name: 'Alice' })
-const doubled = box(() => count.box * 2)  // Computed from other data
-```
-
-**Compose and react:**
-```javascript
-box.App(box.Counter({
-  Display: () => `${count.box} × 2 = ${doubled.box}`,
-  Increment: { onclick: () => count.box++ }
-}))
-```
-
-When you use a box inside another box, MagicBox tracks the dependency. Update the inner box → outer box updates automatically.
 
 ## Features
 
