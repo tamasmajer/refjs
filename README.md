@@ -450,8 +450,8 @@ const doc = box(() => remote({
 
 // Usage in templates
 box.PostView({
-  Title: () => doc.box?.title || 'Loading...',
-  Content: () => doc.box?.body || ''
+  Title: () => doc.box?.title,
+  Content: () => doc.box?.content
 })
 ```
 
