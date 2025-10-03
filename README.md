@@ -189,7 +189,7 @@ const widget = div({ class: 'widget' }, span('Hello'))
 - [Elements without Box Attributes](#elements-without-box-attributes)
 - [Creating Elements with Tags](#creating-elements-with-tags)
 - [List Handling](#list-handling)
-- [HTTP Requests](#http-requests)
+- [Remote Boxes](#remote-boxes)
 - [Best Practices](#best-practices)
 - [VanJS Enhancements](#vanjs-enhancements)
 
@@ -368,7 +368,7 @@ box.TodoList(() =>
 )
 ```
 
-### HTTP Requests
+### Remote Boxes
 
 Handle API calls with reactive loading states and error handling.
 
@@ -436,31 +436,7 @@ const saveNote = (note) => remote({
 })
 ```
 
-### Elements without Box Attributes
 
-Bind properties and events to existing DOM nodes.
-
-**Direct node binding:**
-```javascript
-// Bind to global objects
-box(window, { 
-  onresize: () => updateLayout(),
-  onbeforeunload: (e) => e.preventDefault()
-})
-
-box(document, { onclick: handleGlobalClick })
-
-box(document.body, { onkeydown: (e) => {
-  if (e.key === 'Escape') closeModal()
-}})
-
-// Bind to any DOM element
-const myDiv = document.getElementById('myDiv')
-box(myDiv, {
-  onclick: handleClick,
-  class: () => isActive.box ? 'active' : ''
-})
-```
 
 ### Customizing the Library
 
