@@ -1,6 +1,6 @@
 /**
- * TagUI - Tiny reactive library for building UIs with HTML templates and minimal JS (<2.5KB)
- * github.com/tamasmajer/tag-ui
+ * MagicBox - Tiny reactive library for building UIs with HTML templates and minimal JS (<2.5KB)
+ * github.com/tamasmajer/magic-box
  */
 // using vanjs-1.5.3.js (adapted)
 const ui = (REF, VALUE = REF) => {
@@ -325,4 +325,4 @@ const ui = (REF, VALUE = REF) => {
   return mainProxy
 }
 
-export default ui('tag')
+export default ui('box')

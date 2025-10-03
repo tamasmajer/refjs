@@ -9,12 +9,12 @@
 </head>
 
 <body class="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-  <div tag="App"></div>
+  <div box="App"></div>
 
-  <template tag="Calculator">
+  <template box="Calculator">
     <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm">
       <div class="mb-4">
-        <div tag="Display"
+        <div box="Display"
           class="bg-gray-900 text-white text-right text-3xl font-mono p-4 rounded-lg min-h-[4rem] flex items-center justify-end overflow-hidden">
           0
         </div>
@@ -22,87 +22,87 @@
 
       <div class="grid grid-cols-4 gap-3">
         <!-- Row 1: Clear, ±, %, ÷ -->
-        <button tag="ClearBtn"
+        <button box="ClearBtn"
           class="bg-gray-300 hover:bg-gray-400 text-black font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           AC
         </button>
-        <button tag="PlusMinusBtn"
+        <button box="PlusMinusBtn"
           class="bg-gray-300 hover:bg-gray-400 text-black font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           ±
         </button>
-        <button tag="PercentBtn"
+        <button box="PercentBtn"
           class="bg-gray-300 hover:bg-gray-400 text-black font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           %
         </button>
-        <button tag="DivideBtn"
+        <button box="DivideBtn"
           class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           ÷
         </button>
 
         <!-- Row 2: 7, 8, 9, × -->
-        <button tag="Btn7"
+        <button box="Btn7"
           class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           7
         </button>
-        <button tag="Btn8"
+        <button box="Btn8"
           class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           8
         </button>
-        <button tag="Btn9"
+        <button box="Btn9"
           class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           9
         </button>
-        <button tag="MultiplyBtn"
+        <button box="MultiplyBtn"
           class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           ×
         </button>
 
         <!-- Row 3: 4, 5, 6, - -->
-        <button tag="Btn4"
+        <button box="Btn4"
           class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           4
         </button>
-        <button tag="Btn5"
+        <button box="Btn5"
           class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           5
         </button>
-        <button tag="Btn6"
+        <button box="Btn6"
           class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           6
         </button>
-        <button tag="SubtractBtn"
+        <button box="SubtractBtn"
           class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           −
         </button>
 
         <!-- Row 4: 1, 2, 3, + -->
-        <button tag="Btn1"
+        <button box="Btn1"
           class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           1
         </button>
-        <button tag="Btn2"
+        <button box="Btn2"
           class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           2
         </button>
-        <button tag="Btn3"
+        <button box="Btn3"
           class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           3
         </button>
-        <button tag="AddBtn"
+        <button box="AddBtn"
           class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           +
         </button>
 
         <!-- Row 5: 0 (spans 2), ., = -->
-        <button tag="Btn0"
+        <button box="Btn0"
           class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors col-span-2 min-h-[4rem]">
           0
         </button>
-        <button tag="DecimalBtn"
+        <button box="DecimalBtn"
           class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           .
         </button>
-        <button tag="EqualsBtn"
+        <button box="EqualsBtn"
           class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 px-4 text-xl rounded-xl transition-colors min-h-[4rem]">
           =
         </button>
@@ -111,13 +111,13 @@
   </template>
 
   <script type="module">
-    import tag from 'https://cdn.jsdelivr.net/gh/tamasmajer/tag-ui/tag.min.js'
+    import box from 'https://cdn.jsdelivr.net/gh/tamasmajer/maagic-box/magic-box.min.js'
 
     // Calculator state
-    const display = tag('0')
-    const previousValue = tag(0)
-    const operation = tag(null)
-    const waitingForOperand = tag(false)
+    const display = box('0')
+    const previousValue = box(0)
+    const operation = box(null)
+    const waitingForOperand = box(false)
 
     // Format display value
     const formatDisplay = (value) => {
@@ -135,44 +135,44 @@
 
     // Input a digit
     const inputDigit = (digit) => {
-      if (waitingForOperand.tag) {
-        display.tag = String(digit)
-        waitingForOperand.tag = false
+      if (waitingForOperand.box) {
+        display.box = String(digit)
+        waitingForOperand.box = false
       } else {
-        display.tag = display.tag === '0' ? String(digit) : display.tag + digit
+        display.box = display.box === '0' ? String(digit) : display.box + digit
       }
     }
 
     // Input decimal point
     const inputDecimal = () => {
-      if (waitingForOperand.tag) {
-        display.tag = '0.'
-        waitingForOperand.tag = false
-      } else if (display.tag.indexOf('.') === -1) {
-        display.tag = display.tag + '.'
+      if (waitingForOperand.box) {
+        display.box = '0.'
+        waitingForOperand.box = false
+      } else if (display.box.indexOf('.') === -1) {
+        display.box = display.box + '.'
       }
     }
 
     // Clear calculator
     const clear = () => {
-      display.tag = '0'
-      previousValue.tag = 0
-      operation.tag = null
-      waitingForOperand.tag = false
+      display.box = '0'
+      previousValue.box = 0
+      operation.box = null
+      waitingForOperand.box = false
     }
 
     // Toggle sign
     const toggleSign = () => {
-      const value = parseFloat(display.tag)
+      const value = parseFloat(display.box)
       if (value !== 0) {
-        display.tag = String(-value)
+        display.box = String(-value)
       }
     }
 
     // Calculate percentage
     const percentage = () => {
-      const value = parseFloat(display.tag)
-      display.tag = String(value / 100)
+      const value = parseFloat(display.box)
+      display.box = String(value / 100)
     }
 
     // Perform calculation
@@ -193,38 +193,38 @@
 
     // Perform operation
     const performOperation = (nextOperation) => {
-      const inputValue = parseFloat(display.tag)
+      const inputValue = parseFloat(display.box)
 
-      if (previousValue.tag === 0) {
-        previousValue.tag = inputValue
-      } else if (operation.tag) {
-        const currentValue = previousValue.tag || 0
-        const newValue = calculate(currentValue, inputValue, operation.tag)
+      if (previousValue.box === 0) {
+        previousValue.box = inputValue
+      } else if (operation.box) {
+        const currentValue = previousValue.box || 0
+        const newValue = calculate(currentValue, inputValue, operation.box)
 
-        display.tag = formatDisplay(newValue)
-        previousValue.tag = newValue
+        display.box = formatDisplay(newValue)
+        previousValue.box = newValue
       }
 
-      waitingForOperand.tag = true
-      operation.tag = nextOperation
+      waitingForOperand.box = true
+      operation.box = nextOperation
     }
 
     // Handle equals
     const handleEquals = () => {
-      if (operation.tag && !waitingForOperand.tag) {
-        const inputValue = parseFloat(display.tag)
-        const currentValue = previousValue.tag || 0
-        const newValue = calculate(currentValue, inputValue, operation.tag)
+      if (operation.box && !waitingForOperand.box) {
+        const inputValue = parseFloat(display.box)
+        const currentValue = previousValue.box || 0
+        const newValue = calculate(currentValue, inputValue, operation.box)
 
-        display.tag = formatDisplay(newValue)
-        previousValue.tag = 0
-        operation.tag = null
-        waitingForOperand.tag = true
+        display.box = formatDisplay(newValue)
+        previousValue.box = 0
+        operation.box = null
+        waitingForOperand.box = true
       }
     }
 
     // Keyboard support
-    tag(document, {
+    box(document, {
       onkeydown: (e) => {
         e.preventDefault()
 
@@ -251,8 +251,8 @@
     })
 
     // Render calculator
-    tag.App(tag.Calculator({
-      Display: () => display.tag,
+    box.App(box.Calculator({
+      Display: () => display.box,
 
       // Number buttons
       Btn0: { onclick: () => inputDigit(0) },
